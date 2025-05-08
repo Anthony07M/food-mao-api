@@ -71,7 +71,22 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "entities",
+      "dto",
+      "<rootDir>/main.ts",
+      "<rootDir>/prisma",
+      "\\.providers\\.ts$"
+    ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/$1"
+    },
+    "modulePathIgnorePatterns": [
+      "<rootDir>/main.ts",
+      "\\.module\\.ts$"
+    ]
   }
 }
