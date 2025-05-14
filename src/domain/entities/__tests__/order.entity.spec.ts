@@ -1,4 +1,4 @@
-import { Order, OrderConstructrorParams, OrderId } from '../order.entity';
+import { Order, OrderConstructrorParams, OrderId } from '../order/order.entity';
 
 describe('Unit test s', () => {
   it('should be create Order success', () => {

@@ -1,18 +1,65 @@
-generator client {
-  provider = "prisma-client-js"
-  // output   = ""
-  // output   = "../generated/prisma"
+// This is a Prisma schema file addition for the Client model
+// Add this to your existing schema.prisma file
+
+model Client {
+  id         String   @id
+  name       String
+  email      String   @unique
+  cpf        String   @unique
+  created_at DateTime
+  orders     Order[]  // Relationship with Order model
+
+  @@map("clients")
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
+// Update the Order model to include the client relationship
 model Order {
-  id            String   @id @unique
-  creacreatedAt DateTime
-  valueTotal    Float
+  id                  String    @id
+  order_code          String
+  client_id           String?
+  status              String
+  total               Float
+  payment_status      String
+  created_at          DateTime
+  preparation_started DateTime?
+  ready_at            DateTime?
+  completed_at        DateTime?
+  client              Client?   @relation(fields: [client_id], references: [id])
+  items               OrderItem[]
 
   @@map("orders")
+}
+
+model OrderItem {
+  id          String  @id
+  order_id    String
+  product_id  String
+  quantity    Int
+  notes       String?
+  order       Order   @relation(fields: [order_id], references: [id])
+  product     Product @relation(fields: [product_id], references: [id])
+
+  @@map("order_items")
+}
+
+model Product {
+  id          String      @id
+  name        String
+  category_id String
+  price       Float
+  description String?
+  image_url   String?
+  category    Category    @relation(fields: [category_id], references: [id])
+  order_items OrderItem[]
+
+  @@map("products")
+}
+
+model Category {
+  id          String    @id
+  name        String
+  description String?
+  products    Product[]
+
+  @@map("categories")
 }
