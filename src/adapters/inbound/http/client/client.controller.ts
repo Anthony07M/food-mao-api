@@ -1,22 +1,25 @@
-import { 
-  Body, 
-  Controller, 
-  Delete, 
-  Get, 
-  Inject, 
-  Param, 
-  ParseIntPipe, 
-  Patch, 
-  Post, 
-  Query 
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Inject,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
-import { CreateClientUseCase } from '../../../application/use-cases/client/create-client.usecase';
-import { GetAllClientsUseCase } from '../../../application/use-cases/client/get-all-clients.usecase';
-import { GetClientByIdUseCase } from '../../../application/use-cases/client/get-client-by-id.usecase';
-import { UpdateClientUseCase } from '../../../application/use-cases/client/update-client.usecase';
-import { DeleteClientUseCase } from '../../../application/use-cases/client/delete-client.usecase';
+import { CreateClientUseCase } from 'src/application/use-cases/client/create-client.usecase';
+import {
+  GetAllClientsUseCase,
+  GetAllClientsResponse,
+} from 'src/application/use-cases/client/get-all-clients.usecase';
+import { GetClientByIdUseCase } from 'src/application/use-cases/client/get-client-by-id.usecase';
+import { UpdateClientUseCase } from 'src/application/use-cases/client/update-client.usecase';
+import { DeleteClientUseCase } from 'src/application/use-cases/client/delete-client.usecase';
 
 @Controller('clients')
 export class ClientController {
@@ -44,7 +47,7 @@ export class ClientController {
   findAll(
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
-  ) {
+  ): Promise<GetAllClientsResponse> {
     return this.getAllClientsUseCase.execute(limit, page);
   }
 

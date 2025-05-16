@@ -1,4 +1,8 @@
-import { Client, ClientConstructorParams, ClientId } from '../client/client.entity';
+import {
+  Client,
+  ClientConstructorParams,
+  ClientId,
+} from '../client/client.entity';
 
 describe('Client Entity', () => {
   it('should create Client successfully', () => {

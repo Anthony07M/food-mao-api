@@ -10,6 +10,7 @@ export abstract class ValueObject {
       return false;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
     return isEqual(vo, this);
   }
 }

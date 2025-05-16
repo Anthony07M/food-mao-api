@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Order } from 'src/domain/entities/order/order.entity';
-import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order.repository.persistence';
+import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order/order.repository.persistence';
 
 interface ICreateOrderUseCase {
   total: number;

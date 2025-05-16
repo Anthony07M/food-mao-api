@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../config/prisma/prisma.service';
-import { ClientRepositoryPersistence } from '../client.repository.persistence';
+import { ClientRepositoryPersistence } from '../client/client.repository.persistence';
 import {
   Client,
   ClientId,
@@ -73,7 +73,8 @@ describe('ClientRepositoryPersistence', () => {
         created_at: new Date(),
       };
 
-      jest.spyOn(prismaService.client, 'findUnique')
+      jest
+        .spyOn(prismaService.client, 'findUnique')
         .mockResolvedValue(mockClientData);
 
       const result = await repository.findById(clientId);
@@ -88,8 +89,7 @@ describe('ClientRepositoryPersistence', () => {
     it('should return null when client is not found', async () => {
       const clientId = new ClientId();
 
-      jest.spyOn(prismaService.client, 'findUnique')
-        .mockResolvedValue(null);
+      jest.spyOn(prismaService.client, 'findUnique').mockResolvedValue(null);
 
       const result = await repository.findById(clientId);
 

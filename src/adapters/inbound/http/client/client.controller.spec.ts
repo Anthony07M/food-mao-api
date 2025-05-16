@@ -6,7 +6,7 @@ import { GetAllClientsUseCase } from 'src/application/use-cases/client/get-all-c
 import { GetClientByIdUseCase } from 'src/application/use-cases/client/get-client-by-id.usecase';
 import { UpdateClientUseCase } from 'src/application/use-cases/client/update-client.usecase';
 import { DeleteClientUseCase } from 'src/application/use-cases/client/delete-client.usecase';
-import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client.repository.persistence';
+import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client/client.repository.persistence';
 
 describe('ClientController', () => {
   let controller: ClientController;

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Client } from 'src/domain/entities/client/client.entity';
-import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client.repository.persistence';
+import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client/client.repository.persistence';
 
 interface ICreateClientUseCase {
   name: string;
@@ -20,7 +20,7 @@ export class CreateClientUseCase {
       email: params.email,
       cpf: params.cpf,
     });
-    
+
     await this.clientRepositoryPersistence.save(client);
     return client;
   }
