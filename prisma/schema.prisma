@@ -1,5 +1,14 @@
-// This is a Prisma schema file addition for the Client model
-// Add this to your existing schema.prisma file
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
 model Client {
   id         String   @id
@@ -12,7 +21,6 @@ model Client {
   @@map("clients")
 }
 
-// Update the Order model to include the client relationship
 model Order {
   id                  String    @id
   order_code          String
