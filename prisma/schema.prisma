@@ -16,3 +16,11 @@ model Order {
 
   @@map("orders")
 }
+
+model Category {
+  id          String @id @unique
+  name        String
+  description String
+
+  @@map("categories")
+}
