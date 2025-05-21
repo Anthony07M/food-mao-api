@@ -18,9 +18,23 @@ model Order {
 }
 
 model Category {
+  id          String    @id @unique
+  name        String
+  description String
+  Product     Product[]
+
+  @@map("categories")
+}
+
+model Product {
   id          String @id @unique
   name        String
   description String
+  price       Float
+  imageUrl    String @map("image_url")
 
-  @@map("categories")
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@map("products")
 }

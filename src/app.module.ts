@@ -9,20 +9,33 @@ import { CreateCategoryUseCase } from './application/use-cases/category/create-c
 import { UpdateCategoryUseCase } from './application/use-cases/category/update-category.usecase';
 import { FindAllCategoriesUseCase } from './application/use-cases/category/find-all-categories.usecase';
 import { FindCategoryByIdUseCase } from './application/use-cases/category/findById.usecase';
+import { CreateProductUseCase } from './application/use-cases/product/create-product.usecase';
+import { FindAllProductsUseCase } from './application/use-cases/product/find-all-products.usecase';
+import { FindProductByIdUseCase } from './application/use-cases/product/findById.usecase';
+import { RemoveProductUseCase } from './application/use-cases/product/remove-product.usecase';
+import { UpdateProductUseCase } from './application/use-cases/product/update-product.usecase';
+import { ProductRepositoryPersistence } from './infrastructure/persistence/prisma/product.repository.persistence';
+import { ProductController } from './adapters/inbound/http/product/product.controller';
 
 @Module({
   imports: [],
-  controllers: [OrderController, CategoryController],
+  controllers: [OrderController, CategoryController, ProductController],
   providers: [
     PrismaService,
     CreateOrderUseCase,
     CategoryRepositoryPersistence,
+    ProductRepositoryPersistence,
+    OrderRepositoryPersistence,
     CreateCategoryUseCase,
     UpdateCategoryUseCase,
     UpdateCategoryUseCase,
     FindAllCategoriesUseCase,
-    OrderRepositoryPersistence,
     FindCategoryByIdUseCase,
+    CreateProductUseCase,
+    FindAllProductsUseCase,
+    FindProductByIdUseCase,
+    RemoveProductUseCase,
+    UpdateProductUseCase,
   ],
 })
 export class AppModule {}
