@@ -36,7 +36,7 @@ export class CategoryRepositoryPersistence
   }
 
   async findById(categoryId: CategoryId): Promise<Category | null> {
-    const category = await this.prismaService.category.findUnique({
+    const category = await this.prismaService.category.findFirst({
       where: { id: categoryId.toString() },
     });
 
