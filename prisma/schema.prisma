@@ -38,36 +38,24 @@ model Order {
   @@map("orders")
 }
 
-model OrderItem {
-  id          String  @id
-  order_id    String
-  product_id  String
-  quantity    Int
-  notes       String?
-  order       Order   @relation(fields: [order_id], references: [id])
-  product     Product @relation(fields: [product_id], references: [id])
+model Category {
+  id          String    @id @unique
+  name        String
+  description String
+  Product     Product[]
 
-  @@map("order_items")
+  @@map("categories")
 }
 
 model Product {
-  id          String      @id
+  id          String @id @unique
   name        String
-  category_id String
+  description String
   price       Float
-  description String?
-  image_url   String?
-  category    Category    @relation(fields: [category_id], references: [id])
-  order_items OrderItem[]
+  imageUrl    String @map("image_url")
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
 
   @@map("products")
-}
-
-model Category {
-  id          String    @id
-  name        String
-  description String?
-  products    Product[]
-
-  @@map("categories")
 }
