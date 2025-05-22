@@ -1,7 +1,8 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
   provider = "prisma-client-js"
-  // output   = ""
-  // output   = "../generated/prisma"
 }
 
 datasource db {
@@ -9,10 +10,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Client {
+  id         String   @id
+  name       String
+  email      String   @unique
+  cpf        String   @unique
+  created_at DateTime
+  orders     Order[]  // Relationship with Order model
+
+  @@map("clients")
+}
+
 model Order {
-  id            String   @id @unique
-  creacreatedAt DateTime
-  valueTotal    Float
+  id                  String    @id
+  order_code          String
+  client_id           String?
+  status              String
+  total               Float
+  payment_status      String
+  created_at          DateTime
+  preparation_started DateTime?
+  ready_at            DateTime?
+  completed_at        DateTime?
+  client              Client?   @relation(fields: [client_id], references: [id])
+  items               OrderItem[]
 
   @@map("orders")
 }

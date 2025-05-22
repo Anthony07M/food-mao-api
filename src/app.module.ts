@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { OrderController } from './adapters/inbound/http/order/order.controller';
 import { PrismaService } from './infrastructure/config/prisma/prisma.service';
-import { CreateOrderUseCase } from './application/use-cases/create-order.usecase';
-import { OrderRepositoryPersistence } from './infrastructure/persistence/prisma/order.repository.persistence';
+import { CreateOrderUseCase } from './application/use-cases/order/create-order.usecase';
+import { OrderRepositoryPersistence } from './infrastructure/persistence/prisma/order/order.repository.persistence';
 import { CategoryController } from './adapters/inbound/http/category/category.controller';
 import { CategoryRepositoryPersistence } from './infrastructure/persistence/prisma/category.repository.persistence';
 import { CreateCategoryUseCase } from './application/use-cases/category/create-category.usecase';

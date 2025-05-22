@@ -1,10 +1,24 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { PrismaClientWithClient } from './prisma-extensions';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
   async onModuleInit() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await this.$connect();
   }
+
+  async enableShutdownHooks() {
+    // @ts-expect-error - This is a known issue with Prisma types
+    this.$on('beforeExit', async () => {
+      await this.$disconnect();
+    });
+  }
+}
+
+
+export function getPrismaWithClient(
+  prismaService: PrismaService,
+): PrismaClientWithClient {
+  return prismaService as unknown as PrismaClientWithClient;
 }
