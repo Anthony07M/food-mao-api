@@ -33,7 +33,7 @@ model Order {
   ready_at            DateTime?
   completed_at        DateTime?
   client              Client?   @relation(fields: [client_id], references: [id])
-  items               OrderItem[]
+
 
   @@map("orders")
 }

@@ -63,8 +63,12 @@ export class CategoryRepositoryPersistence
     return {
       currentPage: Math.floor(skip / limit) + 1,
       totalPages: Math.ceil(totalItems / limit),
-      data: categories.map(({ id, ...category }) =>
-        Category.create({ id: new CategoryId(id), ...category }),
+      data: categories.map((category) =>
+        Category.create({ 
+          id: new CategoryId(category.id),
+          name: category.name,
+          description: category.description
+        }),
       ),
     };
   }
