@@ -11,12 +11,11 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
     await this.prismaService.order.create({
       data: {
         id: order.id.toString(),
-        order_code: `ORD-${Date.now()}`, // Gerar código do pedido
-        status: 'PENDING', // Status padrão
+        order_code: `ORD-${Date.now()}`, 
+        status: 'PENDING', 
         total: order.valueTotal as number,
-        payment_status: 'PENDING', // Status de pagamento padrão
+        payment_status: 'PENDING', 
         created_at: order.createdAt,
-        // client_id pode ser null conforme o schema
       },
     });
   }

@@ -97,5 +97,5 @@ describe('ClientRepositoryPersistence', () => {
     });
   });
 
-  // Additional tests for update, remove, and findAll can be added here
+ 
 });

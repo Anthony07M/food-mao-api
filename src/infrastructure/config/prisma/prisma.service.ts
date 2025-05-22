@@ -16,7 +16,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 }
 
-// Add type casting function to use in repositories
+
 export function getPrismaWithClient(
   prismaService: PrismaService,
 ): PrismaClientWithClient {

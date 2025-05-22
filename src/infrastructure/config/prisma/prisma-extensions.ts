@@ -1,7 +1,5 @@
 import { PrismaClient } from '@prisma/client';
 
-// Use a type that tells TypeScript that the client property exists, without
-// trying to extend or override the original Prisma types
 export type PrismaClientWithClient = PrismaClient & {
   client: {
     create: (args: { data: any; select?: any }) => Promise<any>;
