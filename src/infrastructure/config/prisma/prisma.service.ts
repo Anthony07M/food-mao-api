@@ -9,13 +9,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   }
 
   async enableShutdownHooks() {
-    // @ts-expect-error - This is a known issue with Prisma types
     this.$on('beforeExit', async () => {
       await this.$disconnect();
     });
   }
 }
-
 
 export function getPrismaWithClient(
   prismaService: PrismaService,
