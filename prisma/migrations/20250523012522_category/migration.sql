@@ -6,6 +6,3 @@ CREATE TABLE "categories" (
 
     CONSTRAINT "categories_pkey" PRIMARY KEY ("id")
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "categories_id_key" ON "categories"("id");

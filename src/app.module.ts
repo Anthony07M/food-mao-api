@@ -16,9 +16,11 @@ import { RemoveProductUseCase } from './application/use-cases/product/remove-pro
 import { UpdateProductUseCase } from './application/use-cases/product/update-product.usecase';
 import { ProductRepositoryPersistence } from './infrastructure/persistence/prisma/product.repository.persistence';
 import { ProductController } from './adapters/inbound/http/product/product.controller';
+import { ClientModule } from './modules/client.module';
+import { OrderItemModule } from './modules/order-item.module';
 
 @Module({
-  imports: [],
+  imports: [ClientModule, OrderItemModule],
   controllers: [OrderController, CategoryController, ProductController],
   providers: [
     PrismaService,
