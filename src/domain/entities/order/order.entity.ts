@@ -1,25 +1,85 @@
 import { Uuid } from 'src/adapters/shared/value-objects/uui.vo';
+import { Client } from '../client/client.entity';
+import { randomUUID } from 'node:crypto';
+import { OrderItem, OrderItemId } from '../order_item/order-item.entity';
 
 export class OrderId extends Uuid {}
+export type StatusOrder =
+  | 'Pending'
+  | 'Concluded'
+  | 'Canceled'
+  | 'In_Progress'
+  | 'Confirmed'
+  | 'Rejected'
+  | 'Started';
+export type StatusPayment =
+  | 'Pending'
+  | 'Canceled'
+  | 'GeneratedQRCode'
+  | 'Concluded';
 
 export interface OrderConstructrorParams {
   id?: OrderId;
+  orderCode?: string;
+  client?: Client | null;
+  status?: StatusOrder;
+  total?: number;
+  paymentStatus?: StatusPayment;
   createdAt?: Date;
-  valueTotal: number | null;
+  preparationStarted?: Date | null;
+  readyAt?: Date | null;
+  completedAt?: Date | null;
+  items: OrderItem[];
 }
 
 export class Order {
   id: OrderId;
+  orderCode: string;
+  client: Client | null;
+  status: StatusOrder;
+  total: number;
+  paymentStatus: StatusPayment;
   createdAt: Date;
-  valueTotal: number | null;
+  preparationStarted: Date | null;
+  readyAt: Date | null;
+  completedAt: Date | null;
+  items: OrderItem[];
 
   constructor(params: OrderConstructrorParams) {
     this.id = params.id ?? new OrderId();
+    this.orderCode = params.orderCode ?? `ORD-${randomUUID().slice(0, 10)}`;
+    this.client = params.client ?? null;
+    this.status = params.status ?? 'Pending';
+    this.total = params.total ?? 0;
+    this.paymentStatus = params.paymentStatus ?? 'Pending';
     this.createdAt = params.createdAt ?? new Date();
-    this.valueTotal = params.valueTotal ?? null;
+    this.preparationStarted = params.preparationStarted ?? null;
+    this.readyAt = params.readyAt ?? null;
+    this.completedAt = params.completedAt ?? null;
+    this.items = params.items;
   }
 
   static create(params: OrderConstructrorParams): Order {
     return new Order(params);
+  }
+
+  calculateTotal(): number {
+    const total = this.items.reduce((acc, current) => {
+      return current.quantity * current.product.price + acc;
+    }, 0);
+
+    this.total = total;
+
+    return total;
+  }
+
+  addItem(item: OrderItem) {
+    this.items.push(item);
+  }
+
+  removeItem(itemId: OrderItemId) {
+    this.items = [
+      ...this.items.filter((item) => item.id.toString() !== itemId.toString()),
+    ];
   }
 }

@@ -15,15 +15,14 @@ export class CreateOrderItemUseCase {
     private readonly orderItemRepositoryPersistence: OrderItemRepositoryPersistence,
   ) {}
 
-  async execute(params: ICreateOrderItemUseCase): Promise<OrderItem> {
-    const orderItem = OrderItem.create({
-      orderId: params.orderId,
-      productId: params.productId,
-      quantity: params.quantity,
-      notes: params.notes,
-    });
-
-    await this.orderItemRepositoryPersistence.save(orderItem);
-    return orderItem;
+  async execute(params: ICreateOrderItemUseCase) {
+    // const orderItem = OrderItem.create({
+    //   // orderId: params.orderId,
+    //   productId: params.productId,
+    //   quantity: params.quantity,
+    //   notes: params.notes,
+    // });
+    // await this.orderItemRepositoryPersistence.save(orderItem);
+    // return orderItem;
   }
 }
