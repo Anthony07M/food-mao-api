@@ -1,3 +1,6 @@
+import { Category } from '../category.entity';
+import { OrderId } from '../order/order.entity';
+import { Product } from '../product.entity';
 import {
   OrderItem,
   OrderItemConstructorParams,
@@ -6,9 +9,17 @@ import {
 
 describe('OrderItem Entity', () => {
   it('should create OrderItem successfully', () => {
+    const product = Product.create({
+      name: 'Product Test',
+      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      description: 'Lorem ipsum',
+      imageUrl: 'http://test.com',
+      price: 123.44,
+    });
+
     const params: OrderItemConstructorParams = {
-      orderId: 'order-123',
-      productId: 'product-456',
+      orderId: new OrderId(),
+      product,
       quantity: 2,
       notes: 'Extra sauce',
     };
@@ -16,17 +27,26 @@ describe('OrderItem Entity', () => {
     const orderItem = OrderItem.create(params);
 
     expect(orderItem).toBeInstanceOf(OrderItem);
+    expect(orderItem.orderId).toBeInstanceOf(OrderId);
+    expect(orderItem.product).toBeInstanceOf(Product);
     expect(orderItem.id).toBeInstanceOf(OrderItemId);
-    expect(orderItem.orderId).toEqual('order-123');
-    expect(orderItem.productId).toEqual('product-456');
+    expect(orderItem.product).toEqual(product);
     expect(orderItem.quantity).toEqual(2);
     expect(orderItem.notes).toEqual('Extra sauce');
   });
 
   it('should create OrderItem without notes', () => {
+    const product = Product.create({
+      name: 'Product Test',
+      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      description: 'Lorem ipsum',
+      imageUrl: 'http://test.com',
+      price: 123.44,
+    });
+
     const params: OrderItemConstructorParams = {
-      orderId: 'order-123',
-      productId: 'product-456',
+      orderId: new OrderId(),
+      product,
       quantity: 1,
     };
 

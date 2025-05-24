@@ -30,7 +30,7 @@ export class UpdateOrderItemUseCase {
       }
 
       // Update only provided fields
-      if (params.orderId) orderItem.orderId = params.orderId;
+      // if (params.orderId) orderItem.orderId = params.orderId;
       if (params.productId) orderItem.productId = params.productId;
       if (params.quantity) orderItem.quantity = params.quantity;
       if (params.notes !== undefined) orderItem.notes = params.notes;

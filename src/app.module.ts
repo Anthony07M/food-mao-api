@@ -18,6 +18,7 @@ import { ProductRepositoryPersistence } from './infrastructure/persistence/prism
 import { ProductController } from './adapters/inbound/http/product/product.controller';
 import { ClientModule } from './modules/client.module';
 import { OrderItemModule } from './modules/order-item.module';
+import { FindByIdOrderUseCase } from './application/use-cases/order/findById-order.usecase';
 
 @Module({
   imports: [ClientModule, OrderItemModule],
@@ -25,6 +26,7 @@ import { OrderItemModule } from './modules/order-item.module';
   providers: [
     PrismaService,
     CreateOrderUseCase,
+    FindByIdOrderUseCase,
     CategoryRepositoryPersistence,
     ProductRepositoryPersistence,
     OrderRepositoryPersistence,
