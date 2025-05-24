@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -12,7 +11,9 @@ import {
   OrderItemId,
 } from '../../../../domain/entities/order_item/order-item.entity';
 import { Product, ProductId } from '../../../../domain/entities/product.entity';
+// eslint-disable-next-line prettier/prettier
 import { Category, CategoryId } from '../../../../domain/entities/category.entity';
+// eslint-disable-next-line prettier/prettier
 import { Client, ClientId } from '../../../../domain/entities/client/client.entity';
 
 describe('OrderRepositoryPersistence', () => {
@@ -44,9 +45,8 @@ describe('OrderRepositoryPersistence', () => {
       ],
     }).compile();
 
-    repository = module.get<OrderRepositoryPersistence>(
-      OrderRepositoryPersistence,
-    );
+    // eslint-disable-next-line prettier/prettier
+    repository = module.get<OrderRepositoryPersistence>(OrderRepositoryPersistence);
     prismaService = module.get<PrismaService>(PrismaService);
   });
 
@@ -152,7 +152,7 @@ describe('OrderRepositoryPersistence', () => {
               name: 'Smartphone',
               description: 'Latest smartphone',
               price: 999.99,
-              imageUrl: 'http://example.com/phone.jpg', // Corrigido: imageUrl em vez de image_url
+              image_url: 'http://example.com/phone.jpg',
               category_id: categoryId.toString(),
               category: {
                 id: categoryId.toString(),
@@ -298,6 +298,7 @@ describe('OrderRepositoryPersistence', () => {
       // Arrange
       const limit = 10;
       const skip = 0;
+
       const validUuid1 = '550e8400-e29b-41d4-a716-446655440000';
       const validUuid2 = '550e8400-e29b-41d4-a716-446655440001';
       

@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { OrderController } from './order.controller';
 import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
 import { CreateOrderUseCase } from 'src/application/use-cases/order/create-order.usecase';
+import { UpdateOrderUseCase } from 'src/application/use-cases/order/update-order.usecase';
+import { DeleteOrderUseCase } from 'src/application/use-cases/order/delete-order.usecase';
+import { GetAllOrdersUseCase } from 'src/application/use-cases/order/get-all-orders.usecase';
 import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order/order.repository.persistence';
 import { FindByIdOrderUseCase } from 'src/application/use-cases/order/findById-order.usecase';
 
@@ -14,8 +17,11 @@ describe('OrderController', () => {
       providers: [
         PrismaService,
         CreateOrderUseCase,
-        OrderRepositoryPersistence,
         FindByIdOrderUseCase,
+        UpdateOrderUseCase,
+        DeleteOrderUseCase,
+        GetAllOrdersUseCase,
+        OrderRepositoryPersistence,
       ],
       imports: [],
     }).compile();
