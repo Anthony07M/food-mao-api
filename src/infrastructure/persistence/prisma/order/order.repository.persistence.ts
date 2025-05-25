@@ -1,3 +1,7 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { Client, ClientId } from 'src/domain/entities/client/client.entity';
 import {
@@ -6,6 +10,9 @@ import {
   StatusOrder,
   StatusPayment,
 } from 'src/domain/entities/order/order.entity';
+import { OrderItem, OrderItemId } from 'src/domain/entities/order_item/order-item.entity';
+import { Product, ProductId } from 'src/domain/entities/product.entity';
+import { Category, CategoryId } from 'src/domain/entities/category.entity';
 import { OrderRepositoryInterface } from 'src/domain/repositories/order/order.repository.interface';
 import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
 
@@ -22,7 +29,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         total: order.calculateTotal(),
         payment_status: order.paymentStatus,
         created_at: order.createdAt,
-        client_id: order.client?.id.toString(),
+        client_id: order.client ? order.client.id.toString() : null,
         completed_at: order.completedAt,
         ready_at: order.readyAt,
         preparation_started: order.preparationStarted,
@@ -41,6 +48,11 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
   }
 
   async remove(orderId: OrderId): Promise<void> {
+
+    await this.prismaService.orderItem.deleteMany({
+      where: { order_id: orderId.toString() },
+    });
+
     await this.prismaService.order.delete({
       where: { id: orderId.toString() },
     });
@@ -50,7 +62,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
     await this.prismaService.order.update({
       where: { id: order.id.toString() },
       data: {
-        client_id: order.client?.id.toString(),
+        client_id: order.client ? order.client.id.toString() : null, 
         completed_at: order.completedAt,
         order_code: order.orderCode,
         payment_status: order.paymentStatus,
@@ -58,17 +70,6 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         preparation_started: order.preparationStarted,
         status: order.status,
         total: order.calculateTotal(),
-        // items: {
-        //   updateMany: {
-        //     data: order.items.map((item) => {
-        //       return {
-        //         product_id: item.product.id.toString(),
-        //         quantity: item.quantity,
-        //         notes: item.notes,
-        //       };
-        //     }),
-        //   },
-        // },
       },
     });
   }
@@ -88,9 +89,35 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
 
     if (!order) return null;
 
+    const items = order.items.map((itemData) => {
+
+      const category = new Category({
+        id: new CategoryId(itemData.product.category.id),
+        name: itemData.product.category.name,
+        description: itemData.product.category.description,
+      });
+
+      const product = new Product({
+        id: new ProductId(itemData.product.id),
+        name: itemData.product.name,
+        description: itemData.product.description,
+        price: itemData.product.price,
+        imageUrl: itemData.product.imageUrl,
+        category,
+      });
+
+      return new OrderItem({
+        id: new OrderItemId(itemData.id),
+        orderId: new OrderId(order.id),
+        product,
+        quantity: itemData.quantity,
+        notes: itemData.notes,
+      });
+    });
+
     return Order.create({
       id: new OrderId(order.id),
-      items: [],
+      items, 
       completedAt: order.completed_at,
       createdAt: order.created_at,
       orderCode: order.order_code,
@@ -126,6 +153,9 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
           },
         },
       },
+      orderBy: {
+        created_at: 'desc',
+      },
     });
 
     const totalItems = await this.prismaService.order.count();
@@ -134,9 +164,36 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
       currentPage: Math.floor(skip / limit) + 1,
       totalPages: Math.ceil(totalItems / limit),
       data: orders.map((order) => {
+
+        const items = order.items.map((itemData) => {
+
+          const category = new Category({
+            id: new CategoryId(itemData.product.category.id),
+            name: itemData.product.category.name,
+            description: itemData.product.category.description,
+          });
+
+          const product = new Product({
+            id: new ProductId(itemData.product.id),
+            name: itemData.product.name,
+            description: itemData.product.description,
+            price: itemData.product.price,
+            imageUrl: itemData.product.imageUrl,
+            category,
+          });
+
+          return new OrderItem({
+            id: new OrderItemId(itemData.id),
+            orderId: new OrderId(order.id),
+            product,
+            quantity: itemData.quantity,
+            notes: itemData.notes,
+          });
+        });
+
         return Order.create({
           id: new OrderId(order.id),
-          items: [],
+          items,
           completedAt: order.completed_at,
           createdAt: order.created_at,
           orderCode: order.order_code,

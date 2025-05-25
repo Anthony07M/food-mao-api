@@ -2,6 +2,9 @@ import { Module } from '@nestjs/common';
 import { OrderController } from './adapters/inbound/http/order/order.controller';
 import { PrismaService } from './infrastructure/config/prisma/prisma.service';
 import { CreateOrderUseCase } from './application/use-cases/order/create-order.usecase';
+import { UpdateOrderUseCase } from './application/use-cases/order/update-order.usecase';
+import { DeleteOrderUseCase } from './application/use-cases/order/delete-order.usecase';
+import { GetAllOrdersUseCase } from './application/use-cases/order/get-all-orders.usecase';
 import { OrderRepositoryPersistence } from './infrastructure/persistence/prisma/order/order.repository.persistence';
 import { CategoryController } from './adapters/inbound/http/category/category.controller';
 import { CategoryRepositoryPersistence } from './infrastructure/persistence/prisma/category.repository.persistence';
@@ -25,16 +28,21 @@ import { FindByIdOrderUseCase } from './application/use-cases/order/findById-ord
   controllers: [OrderController, CategoryController, ProductController],
   providers: [
     PrismaService,
+    // Order Use Cases
     CreateOrderUseCase,
     FindByIdOrderUseCase,
-    CategoryRepositoryPersistence,
-    ProductRepositoryPersistence,
+    UpdateOrderUseCase,
+    DeleteOrderUseCase,
+    GetAllOrdersUseCase,
     OrderRepositoryPersistence,
+    // Category Use Cases
+    CategoryRepositoryPersistence,
     CreateCategoryUseCase,
-    UpdateCategoryUseCase,
     UpdateCategoryUseCase,
     FindAllCategoriesUseCase,
     FindCategoryByIdUseCase,
+    // Product Use Cases
+    ProductRepositoryPersistence,
     CreateProductUseCase,
     FindAllProductsUseCase,
     FindProductByIdUseCase,
