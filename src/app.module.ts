@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { OrderController } from './adapters/inbound/http/order/order.controller';
 import { PrismaService } from './infrastructure/config/prisma/prisma.service';
 import { CreateOrderUseCase } from './application/use-cases/order/create-order.usecase';
@@ -22,9 +23,10 @@ import { ProductController } from './adapters/inbound/http/product/product.contr
 import { ClientModule } from './modules/client.module';
 import { OrderItemModule } from './modules/order-item.module';
 import { FindByIdOrderUseCase } from './application/use-cases/order/findById-order.usecase';
+import { LoggerMiddleware } from './adapters/inbound/http/morgan/morgan.middleware';
 
 @Module({
-  imports: [ClientModule, OrderItemModule],
+  imports: [ClientModule, OrderItemModule, ConfigModule.forRoot()],
   controllers: [OrderController, CategoryController, ProductController],
   providers: [
     PrismaService,
@@ -50,4 +52,8 @@ import { FindByIdOrderUseCase } from './application/use-cases/order/findById-ord
     UpdateProductUseCase,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
