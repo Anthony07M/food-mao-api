@@ -344,7 +344,7 @@ FOOD-MAO-API/
 
 ### 1. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/food-mao-api.git
+git clone https://github.com/Anthony07M/food-mao-api.git
 cd food-mao-api
 ```
 
@@ -642,12 +642,11 @@ npx prisma db seed
 
 ### Estrutura de Commits
 ```
-type(scope): description
-
-feat(auth): add JWT authentication
-fix(order): resolve calculation bug
-docs(readme): update installation guide
-test(user): add unit tests for user service
+type: description
+feat: add JWT authentication
+fix: resolve calculation bug
+docs: update installation guide
+test: add unit tests for user service
 ```
 
 ## 📝 Licença
