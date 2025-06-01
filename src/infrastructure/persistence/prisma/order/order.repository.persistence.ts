@@ -1,7 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { Client, ClientId } from 'src/domain/entities/client/client.entity';
 import {
@@ -10,7 +6,10 @@ import {
   StatusOrder,
   StatusPayment,
 } from 'src/domain/entities/order/order.entity';
-import { OrderItem, OrderItemId } from 'src/domain/entities/order_item/order-item.entity';
+import {
+  OrderItem,
+  OrderItemId,
+} from 'src/domain/entities/order_item/order-item.entity';
 import { Product, ProductId } from 'src/domain/entities/product.entity';
 import { Category, CategoryId } from 'src/domain/entities/category.entity';
 import { OrderRepositoryInterface } from 'src/domain/repositories/order/order.repository.interface';
@@ -48,7 +47,6 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
   }
 
   async remove(orderId: OrderId): Promise<void> {
-
     await this.prismaService.orderItem.deleteMany({
       where: { order_id: orderId.toString() },
     });
@@ -62,7 +60,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
     await this.prismaService.order.update({
       where: { id: order.id.toString() },
       data: {
-        client_id: order.client ? order.client.id.toString() : null, 
+        client_id: order.client ? order.client.id.toString() : null,
         completed_at: order.completedAt,
         order_code: order.orderCode,
         payment_status: order.paymentStatus,
@@ -90,7 +88,6 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
     if (!order) return null;
 
     const items = order.items.map((itemData) => {
-
       const category = new Category({
         id: new CategoryId(itemData.product.category.id),
         name: itemData.product.category.name,
@@ -117,7 +114,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
 
     return Order.create({
       id: new OrderId(order.id),
-      items, 
+      items,
       completedAt: order.completed_at,
       createdAt: order.created_at,
       orderCode: order.order_code,
@@ -164,9 +161,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
       currentPage: Math.floor(skip / limit) + 1,
       totalPages: Math.ceil(totalItems / limit),
       data: orders.map((order) => {
-
         const items = order.items.map((itemData) => {
-
           const category = new Category({
             id: new CategoryId(itemData.product.category.id),
             name: itemData.product.category.name,

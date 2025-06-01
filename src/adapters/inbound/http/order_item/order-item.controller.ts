@@ -13,10 +13,7 @@ import {
 import { CreateOrderItemDto } from './dto/create-order-item.dto';
 import { UpdateOrderItemDto } from './dto/update-order-item.dto';
 import { CreateOrderItemUseCase } from 'src/application/use-cases/order_item/create-order-item.usecase';
-import {
-  GetAllOrderItemsUseCase,
-  GetAllOrderItemsResponse,
-} from 'src/application/use-cases/order_item/get-all-order-items.usecase';
+import { GetAllOrderItemsUseCase } from 'src/application/use-cases/order_item/get-all-order-items.usecase';
 import { GetOrderItemByIdUseCase } from 'src/application/use-cases/order_item/get-order-item-by-id.usecase';
 import { GetOrderItemsByOrderUseCase } from 'src/application/use-cases/order_item/get-order-items-by-order.usecase';
 import { UpdateOrderItemUseCase } from 'src/application/use-cases/order_item/update-order-item.usecase';
@@ -51,7 +48,7 @@ export class OrderItemController {
   findAll(
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
-  ): Promise<GetAllOrderItemsResponse> {
+  ) {
     return this.getAllOrderItemsUseCase.execute(limit, page);
   }
 

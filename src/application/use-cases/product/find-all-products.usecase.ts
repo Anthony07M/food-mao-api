@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ProductRepositoryPersistence } from 'src/infrastructure/persistence/prisma/product.repository.persistence';
+import { ProductRepositoryPersistence } from 'src/infrastructure/persistence/prisma/product/product.repository.persistence';
 
 export interface IFindAllProductsUseCase {
   limit: number;

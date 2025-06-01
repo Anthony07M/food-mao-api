@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category.repository.persistence';
+import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category/category.repository.persistence';
 
 export interface IFindAllCategoriesUseCase {
   limit: number;

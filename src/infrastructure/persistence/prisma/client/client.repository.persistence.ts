@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  PrismaService,
-  getPrismaWithClient,
-} from 'src/infrastructure/config/prisma/prisma.service';
+import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
 import { Client, ClientId } from 'src/domain/entities/client/client.entity';
 import { ClientRepositoryInterface } from 'src/domain/repositories/client/client.repository.interface';
 import { PaginatedResult } from 'src/adapters/shared/repositories/repository.interface';
@@ -12,10 +9,7 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
   constructor(private readonly prismaService: PrismaService) {}
 
   async save(entity: Client): Promise<void> {
-    // Use the type-safe helper
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    await prisma.client.create({
+    await this.prismaService.client.create({
       data: {
         id: entity.id.toString(),
         name: entity.name,
@@ -27,9 +21,7 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
   }
 
   async remove(entityId: ClientId): Promise<void> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    await prisma.client.delete({
+    await this.prismaService.client.delete({
       where: {
         id: entityId.toString(),
       },
@@ -37,9 +29,7 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
   }
 
   async update(entity: Client): Promise<void> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    await prisma.client.update({
+    await this.prismaService.client.update({
       where: {
         id: entity.id.toString(),
       },
@@ -52,10 +42,7 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
   }
 
   async findById(entityId: ClientId): Promise<Client | null> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const client = await prisma.client.findUnique({
+    const client = await this.prismaService.client.findUnique({
       where: {
         id: entityId.toString(),
       },
@@ -66,27 +53,20 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
     }
 
     return Client.create({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       id: new ClientId(client.id),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       createdAt: client.created_at,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       name: client.name,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       email: client.email,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       cpf: client.cpf,
     });
   }
 
   async findAll(limit: number, skip: number): Promise<PaginatedResult<Client>> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    const total = await prisma.client.count();
+    const total = await this.prismaService.client.count();
     const totalPages = Math.ceil(total / limit);
     const currentPage = Math.floor(skip / limit) + 1;
 
-    const clients = await prisma.client.findMany({
+    const clients = await this.prismaService.client.findMany({
       skip,
       take: limit,
     });
@@ -96,15 +76,10 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
       totalPages,
       data: clients.map((client) =>
         Client.create({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
           id: new ClientId(client.id),
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           createdAt: client.created_at,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           name: client.name,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           email: client.email,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           cpf: client.cpf,
         }),
       ),

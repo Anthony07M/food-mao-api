@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import {
-  PrismaService,
-  getPrismaWithClient,
-} from 'src/infrastructure/config/prisma/prisma.service';
+import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
 import {
   OrderItem,
   OrderItemId,
 } from 'src/domain/entities/order_item/order-item.entity';
 import { OrderItemRepositoryInterface } from 'src/domain/repositories/order_item/order-item.repository.interface';
 import { PaginatedResult } from 'src/adapters/shared/repositories/repository.interface';
+import { OrderId } from 'src/domain/entities/order/order.entity';
+import { Product, ProductId } from 'src/domain/entities/product.entity';
+import { Category, CategoryId } from 'src/domain/entities/category.entity';
 
 @Injectable()
 export class OrderItemRepositoryPersistence
@@ -17,13 +17,10 @@ export class OrderItemRepositoryPersistence
   constructor(private readonly prismaService: PrismaService) {}
 
   async save(entity: OrderItem): Promise<void> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    await (prisma as any).orderItem.create({
+    await this.prismaService.orderItem.create({
       data: {
         id: entity.id.toString(),
-        order_id: entity.orderId,
+        order_id: entity.orderId.toString(),
         product_id: entity.productId,
         quantity: entity.quantity,
         notes: entity.notes,
@@ -32,10 +29,7 @@ export class OrderItemRepositoryPersistence
   }
 
   async remove(entityId: OrderItemId): Promise<void> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    await (prisma as any).orderItem.delete({
+    await this.prismaService.orderItem.delete({
       where: {
         id: entityId.toString(),
       },
@@ -43,15 +37,12 @@ export class OrderItemRepositoryPersistence
   }
 
   async update(entity: OrderItem): Promise<void> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    await (prisma as any).orderItem.update({
+    await this.prismaService.orderItem.update({
       where: {
         id: entity.id.toString(),
       },
       data: {
-        order_id: entity.orderId,
+        order_id: entity.orderId.toString(),
         product_id: entity.productId,
         quantity: entity.quantity,
         notes: entity.notes,
@@ -60,30 +51,34 @@ export class OrderItemRepositoryPersistence
   }
 
   async findById(entityId: OrderItemId): Promise<OrderItem | null> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const orderItem = await (prisma as any).orderItem.findUnique({
+    const orderItem = await this.prismaService.orderItem.findUnique({
       where: {
         id: entityId.toString(),
       },
+      include: { product: { include: { category: true } } },
     });
-
+    console.log('========================>')
     if (!orderItem) {
       return null;
     }
 
     return OrderItem.create({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       id: new OrderItemId(orderItem.id),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      orderId: orderItem.order_id,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      product: orderItem.product_id,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+      orderId: new OrderId(orderItem.order_id),
       quantity: orderItem.quantity,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       notes: orderItem.notes,
+      product: Product.create({
+        id: new ProductId(orderItem.product.id),
+        name: orderItem.product.name,
+        price: orderItem.product.price,
+        description: orderItem.product.description,
+        imageUrl: orderItem.product.imageUrl,
+        category: Category.create({
+          id: new CategoryId(orderItem.product.category.id),
+          description: orderItem.product.category.description,
+          name: orderItem.product.category.name,
+        }),
+      }),
     });
   }
 
@@ -91,62 +86,67 @@ export class OrderItemRepositoryPersistence
     limit: number,
     skip: number,
   ): Promise<PaginatedResult<OrderItem>> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const total = await (prisma as any).orderItem.count();
+    const total = await this.prismaService.orderItem.count();
     const totalPages = Math.ceil(total / limit);
     const currentPage = Math.floor(skip / limit) + 1;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const orderItems = await (prisma as any).orderItem.findMany({
+    const orderItems = await this.prismaService.orderItem.findMany({
       skip,
       take: limit,
+      include: { order: true, product: { include: { category: true } } },
     });
 
     return {
       currentPage,
       totalPages,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      data: orderItems.map((orderItem) =>
-        OrderItem.create({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
+      data: orderItems?.map((orderItem) => {
+        return OrderItem.create({
           id: new OrderItemId(orderItem.id),
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          orderId: orderItem.order_id,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          product: orderItem.product_id,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+          orderId: new OrderId(orderItem.order_id),
           quantity: orderItem.quantity,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           notes: orderItem.notes,
-        }),
-      ),
+          product: Product.create({
+            id: new ProductId(orderItem.product.id),
+            name: orderItem.product.name,
+            price: orderItem.product.price,
+            description: orderItem.product.description,
+            imageUrl: orderItem.product.imageUrl,
+            category: Category.create({
+              id: new CategoryId(orderItem.product.category.id),
+              description: orderItem.product.category.description,
+              name: orderItem.product.category.name,
+            }),
+          }),
+        });
+      }),
     };
   }
 
   async findByOrderId(orderId: string): Promise<OrderItem[]> {
-    const prisma = getPrismaWithClient(this.prismaService);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const orderItems = await (prisma as any).orderItem.findMany({
+    const orderItems = await this.prismaService.orderItem.findMany({
       where: {
         order_id: orderId,
       },
+      include: { order: true, product: { include: { category: true } } },
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     return orderItems.map((orderItem) =>
       OrderItem.create({
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-argument
         id: new OrderItemId(orderItem.id),
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        orderId: orderItem.order_id,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-        product: orderItem.product_id,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+        orderId: new OrderId(orderItem.order_id),
+        product: Product.create({
+          id: new ProductId(orderItem.product.id),
+          name: orderItem.product.name,
+          price: orderItem.product.price,
+          description: orderItem.product.description,
+          imageUrl: orderItem.product.imageUrl,
+          category: Category.create({
+            id: new CategoryId(orderItem.product.category.id),
+            description: orderItem.product.category.description,
+            name: orderItem.product.category.name,
+          }),
+        }),
         quantity: orderItem.quantity,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         notes: orderItem.notes,
       }),
     );

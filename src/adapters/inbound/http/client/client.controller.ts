@@ -45,7 +45,7 @@ export class ClientController {
 
   @Get()
   findAll(
-    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
+    @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 100,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
   ): Promise<GetAllClientsResponse> {
     return this.getAllClientsUseCase.execute(limit, page);
