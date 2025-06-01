@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CategoryId } from 'src/domain/entities/category.entity';
-import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category.repository.persistence';
+import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category/category.repository.persistence';
 
 @Injectable()
 export class FindCategoryByIdUseCase {

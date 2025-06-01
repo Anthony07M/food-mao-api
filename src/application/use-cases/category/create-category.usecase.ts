@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Category } from 'src/domain/entities/category.entity';
-import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category.repository.persistence';
+import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category/category.repository.persistence';
 
 export interface ICreateCategoryUseCase {
   name: string;
