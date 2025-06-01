@@ -2,6 +2,14 @@
 
 API RESTful para sistema de gestão de pedidos de comida, desenvolvida com NestJS e arquitetura hexagonal (Clean Architecture).
 
+> **Projeto desenvolvido para a Fase 01 do Tech Challenge em Software Architecture da FIAP**
+
+## 👥 Equipe de Desenvolvimento
+
+- **[Aldair Azevedo](https://github.com/AldairAzevedo)** - RM361097
+- **[Andre Costa](https://github.com/andreneox)** - RM361095  
+- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361096
+
 ## 📋 Índice
 
 - [Sobre o Projeto](#sobre-o-projeto)
@@ -137,9 +145,23 @@ Este projeto segue os princípios da **Arquitetura Hexagonal (Clean Architecture
 
 ### Fluxo Principal de Criação de Pedido
 
-![Fluxo de Arquitetura](./docs/images/create-order-flow.png)
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant API as API Gateway
+    participant UC as Use Case
+    participant R as Repository
+    participant DB as Database
 
-*Fluxo de dados seguindo a Arquitetura Hexagonal - da requisição HTTP até a resposta final*
+    C->>+API: POST /orders
+    API->>+UC: CreateOrderUseCase
+    UC->>+R: OrderRepository
+    R->>+DB: Save Order
+    DB-->>-R: Order Created
+    R-->>-UC: Order Entity
+    UC-->>-API: Order Response
+    API-->>-C: 201 Created
+```
 
 ### Fluxo de Consulta de Produtos
 
@@ -631,10 +653,13 @@ test(user): add unit tests for user service
 
 Este projeto está sob a licença UNLICENSED.
 
-## 👨‍💻 Autor
+## 👨‍💻 Equipe
 
-Desenvolvido com ❤️ por [Seu Nome]
+**Projeto desenvolvido para a Fase 01 do Tech Challenge em Software Architecture da FIAP**
+
+- **[Aldair Azevedo](https://github.com/AldairAzevedo)** - RM361097
+- **[Andre Costa](https://github.com/andreneox)** - RM361095  
+- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361096
 
 ---
 
-⭐ Se este projeto te ajudou, deixe uma estrela no repositório!
