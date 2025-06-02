@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common';
 import { Client, ClientId } from 'src/domain/entities/client/client.entity';
 import {
