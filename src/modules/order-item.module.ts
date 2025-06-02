@@ -9,6 +9,7 @@ import { UpdateOrderItemUseCase } from 'src/application/use-cases/order_item/upd
 import { DeleteOrderItemUseCase } from 'src/application/use-cases/order_item/delete-order-item.usecase';
 import { PaymentUseCase } from 'src/application/use-cases/payment/payment.usecase';
 import { OrderItemRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order_item/order-item.repository.persistence';
+import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order/order.repository.persistence';
 import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
 
 @Module({
@@ -16,6 +17,7 @@ import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
   providers: [
     PrismaService,
     OrderItemRepositoryPersistence,
+    OrderRepositoryPersistence,
     CreateOrderItemUseCase,
     GetAllOrderItemsUseCase,
     GetOrderItemByIdUseCase,

@@ -46,6 +46,7 @@ model Order {
   client_id           String?
   status              String
   total               Float
+  payment_id          String?
   payment_status      String
   created_at          DateTime
   preparation_started DateTime?

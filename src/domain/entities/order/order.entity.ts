@@ -24,6 +24,7 @@ export interface OrderConstructrorParams {
   client?: Client | null;
   status?: StatusOrder;
   total?: number;
+  paymentId?: string | null;
   paymentStatus?: StatusPayment;
   createdAt?: Date;
   preparationStarted?: Date | null;
@@ -38,6 +39,7 @@ export class Order {
   client: Client | null;
   status: StatusOrder;
   total: number;
+  paymentId: string | null;
   paymentStatus: StatusPayment;
   createdAt: Date;
   preparationStarted: Date | null;
@@ -51,6 +53,7 @@ export class Order {
     this.client = params.client ?? null;
     this.status = params.status ?? 'Pending';
     this.total = params.total ?? 0;
+    this.paymentId = params.paymentId ?? null;
     this.paymentStatus = params.paymentStatus ?? 'Pending';
     this.createdAt = params.createdAt ?? new Date();
     this.preparationStarted = params.preparationStarted ?? null;

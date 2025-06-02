@@ -1,13 +1,14 @@
-import { Param, Controller, Inject, Get, ParseUUIDPipe } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { PaymentUseCase } from 'src/application/use-cases/payment/payment.usecase';
+import { PaymentDto } from './dto/payment.dto';
 
 @Controller('payment')
 export class PaymentController {
   @Inject(PaymentUseCase)
   private readonly paymentUseCase: PaymentUseCase;
 
-  @Get('/:orderId')
-  async payment(@Param('orderId', new ParseUUIDPipe()) orderId: string) {
-    return await this.paymentUseCase.payment(orderId);
+  @Post()
+  async payment(@Body() paymentDto: PaymentDto) {
+    return await this.paymentUseCase.payment(paymentDto.orderId);
   }
 }
