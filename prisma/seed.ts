@@ -117,5 +117,5 @@ export const seed = async () => {
 
 (async () => {
   await seed();
-  console.log('seed apply.');
+
 })();

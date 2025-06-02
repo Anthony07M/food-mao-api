@@ -559,7 +559,7 @@ O projeto utiliza Jest com as seguintes configurações:
 
 A documentação completa da API está disponível via Swagger UI:
 
-**URL:** `http://localhost:3000/api/docs`
+**URL:** `http://localhost:3000/docs`
 
 ### Recursos da Documentação:
 - 📖 Especificação completa de todos os endpoints

@@ -4,64 +4,56 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  IsUrl,
   IsUUID,
+  Min,
+  ValidateNested,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-class CategoryDto {
+export class CreateOrderItemDto {
+  @ApiProperty({
+    description: 'ID do produto',
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  })
+  @IsNotEmpty()
   @IsUUID()
-  @IsNotEmpty()
-  id: string;
+  productId: string;
 
-  @IsString()
+  @ApiProperty({
+    description: 'Quantidade do produto',
+    example: 2,
+    minimum: 1,
+  })
   @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  description: string;
-}
-
-class ProductDto {
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
-
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
   @IsNumber()
-  @IsNotEmpty()
-  price: number;
-
-  @IsString()
-  @IsNotEmpty()
-  description: string;
-
-  @IsUrl()
-  @IsNotEmpty()
-  imageUrl: string;
-
-  @IsNotEmpty()
-  category: CategoryDto;
-}
-
-class ItemDto {
-  @IsNumber()
-  @IsNotEmpty()
+  @Min(1)
   quantity: number;
-
-  @IsOptional()
-  @IsString()
-  notes?: string | null;
-
-  @IsNotEmpty()
-  product: ProductDto;
 }
 
 export class CreateOrderDto {
-  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Lista de itens do pedido',
+    type: [CreateOrderItemDto],
+  })
   @IsArray()
-  items: ItemDto[];
+  @ValidateNested({ each: true })
+  @Type(() => CreateOrderItemDto)
+  items: CreateOrderItemDto[];
+
+  @ApiPropertyOptional({
+    description: 'ID do cliente (opcional)',
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  })
+  @IsOptional()
+  @IsUUID()
+  clientId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Observações gerais do pedido (opcional)',
+    example: 'Pedido para entrega rápida',
+  })
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }
