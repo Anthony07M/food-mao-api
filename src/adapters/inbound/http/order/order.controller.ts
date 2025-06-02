@@ -19,9 +19,10 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiExtraModels
 } from '@nestjs/swagger';
 import { CreateOrderUseCase } from 'src/application/use-cases/order/create-order.usecase';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto, CreateOrderItemDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { FindByIdOrderUseCase } from 'src/application/use-cases/order/findById-order.usecase';
 import { UpdateOrderUseCase } from 'src/application/use-cases/order/update-order.usecase';
@@ -29,6 +30,7 @@ import { DeleteOrderUseCase } from 'src/application/use-cases/order/delete-order
 import { GetAllOrdersUseCase } from 'src/application/use-cases/order/get-all-orders.usecase';
 
 @ApiTags('Orders')
+@ApiExtraModels(CreateOrderItemDto, CreateOrderDto)
 @Controller('order')
 export class OrderController {
   @Inject(CreateOrderUseCase)
@@ -45,6 +47,7 @@ export class OrderController {
 
   @Inject(GetAllOrdersUseCase)
   private readonly getAllOrdersUseCase: GetAllOrdersUseCase;
+
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -77,7 +80,7 @@ export class OrderController {
           {
             id: 'item-uuid',
             quantity: 2,
-            notes: 'Pedido para entrega rápida',
+            notes: 'Sem cebola', // Notes específico do item
             product: {
               id: 'b619076d-c198-435f-aa6f-7361d752a160',
               name: 'X-caboquinho',
@@ -105,12 +108,12 @@ export class OrderController {
   })
   async create(@Body() createOrderDto: CreateOrderDto) {
     return await this.createOrderUseCase.execute({
+      clientId: createOrderDto.clientId,
       items: createOrderDto.items.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
+        notes: item.notes, 
       })),
-      clientId: createOrderDto.clientId,
-      notes: createOrderDto.notes,
     });
   }
 

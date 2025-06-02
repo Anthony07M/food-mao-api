@@ -29,6 +29,14 @@ export class CreateOrderItemDto {
   @IsNumber()
   @Min(1)
   quantity: number;
+
+  @ApiPropertyOptional({
+    description: 'Observações sobre o item específico (opcional)',
+    example: 'Sem cebola'
+  })
+  @IsOptional()
+  @IsString()
+  notes?: string;
 }
 
 export class CreateOrderDto {
@@ -48,12 +56,4 @@ export class CreateOrderDto {
   @IsOptional()
   @IsUUID()
   clientId?: string;
-
-  @ApiPropertyOptional({
-    description: 'Observações gerais do pedido (opcional)',
-    example: 'Pedido para entrega rápida',
-  })
-  @IsOptional()
-  @IsString()
-  notes?: string;
 }

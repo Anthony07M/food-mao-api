@@ -10,12 +10,12 @@ import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/pris
 interface OrderItemInput {
   productId: string;
   quantity: number;
+  notes?: string | null; 
 }
 
 interface ICreateOrderUseCase {
   items: OrderItemInput[];
-  clientId?: string | null; 
-  notes?: string | null; 
+  clientId?: string | null;
 }
 
 @Injectable()
@@ -57,7 +57,7 @@ export class CreateOrderUseCase {
       const orderItem = OrderItem.create({
         orderId,
         quantity: itemInput.quantity,
-        notes: params.notes, 
+        notes: itemInput.notes, 
         product,
       });
 
@@ -95,7 +95,7 @@ export class CreateOrderUseCase {
       items: order.items.map((item) => ({
         id: item.id.toString(),
         quantity: item.quantity,
-        notes: item.notes,
+        notes: item.notes, 
         product: {
           id: item.product.id.toString(),
           name: item.product.name,
