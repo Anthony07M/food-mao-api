@@ -57,7 +57,6 @@ export class OrderItemRepositoryPersistence
       },
       include: { product: { include: { category: true } } },
     });
-    console.log('========================>')
     if (!orderItem) {
       return null;
     }
