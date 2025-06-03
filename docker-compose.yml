@@ -1,12 +1,28 @@
 services:
-
   db:
     image: postgres:17
     restart: always
     ports:
-      - "5432:5432"
+      - '5432:5432'
     environment:
       POSTGRES_PASSWORD: 1234
       POSTGRES_USER: root
       POSTGRES_DB: food_db
-
+    networks:
+      - food-mao-net
+  api:
+    build: .
+    container_name: food-mao-api
+    tty: true
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    command: npm run start:prod
+    networks:
+      - food-mao-net
+    depends_on:
+      - db
+networks:
+  food-mao-net:
+    driver: bridge
