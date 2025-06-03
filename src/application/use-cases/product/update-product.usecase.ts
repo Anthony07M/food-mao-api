@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CategoryId } from 'src/domain/entities/category.entity';
 import { ProductId } from 'src/domain/entities/product.entity';
-import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category.repository.persistence';
-import { ProductRepositoryPersistence } from 'src/infrastructure/persistence/prisma/product.repository.persistence';
+import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category/category.repository.persistence';
+import { ProductRepositoryPersistence } from 'src/infrastructure/persistence/prisma/product/product.repository.persistence';
 
 export interface IUpdateProductUseCase {
   name?: string;

@@ -1,20 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, NotFoundException } from '@nestjs/common';
-import {
-  Order,
-  OrderId,
-  StatusOrder,
-  StatusPayment,
-} from 'src/domain/entities/order/order.entity';
+import { OrderId, StatusOrder } from 'src/domain/entities/order/order.entity';
 import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order/order.repository.persistence';
 
 interface IUpdateOrderUseCaseParams {
   id: string;
   status?: StatusOrder;
-  paymentStatus?: StatusPayment;
 }
 
 @Injectable()
@@ -23,40 +13,31 @@ export class UpdateOrderUseCase {
     private readonly orderRepositoryPersistence: OrderRepositoryPersistence,
   ) {}
 
-  async execute(params: IUpdateOrderUseCaseParams) {
+  async execute({ id, status }: IUpdateOrderUseCaseParams) {
     const order = await this.orderRepositoryPersistence.findById(
-      new OrderId(params.id),
+      new OrderId(id),
     );
 
     if (!order) {
       throw new NotFoundException('Order not found');
     }
 
-    // Update only provided fields
-    if (params.status) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      order.status = params.status;
-    }
-    if (params.paymentStatus) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      order.paymentStatus = params.paymentStatus;
+    if (status === 'Received') {
+      order.receivedOrder();
     }
 
-    if (params.status === 'In_Progress' && !order.preparationStarted) {
-      order.preparationStarted = new Date();
+    if (status === 'In_Progress') {
+      order.initPreparation();
     }
-    if (params.status === 'Started' && !order.readyAt) {
-      order.readyAt = new Date();
-    }
-    if (params.status === 'Concluded' && !order.completedAt) {
-      order.completedAt = new Date();
+
+    if (status === 'Ready') {
+      order.finalizyPreparation();
     }
 
     await this.orderRepositoryPersistence.update(order);
 
     return {
       id: order.id.toString(),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       orderCode: order.orderCode,
       client: order.client,
       status: order.status,

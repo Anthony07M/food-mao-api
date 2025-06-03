@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+>>>>>>> b262a99b357a6ece920c7e35dbb4aa8688d82c9c
 import { Injectable } from '@nestjs/common';
 import { Client, ClientId } from 'src/domain/entities/client/client.entity';
 import {
@@ -142,24 +146,31 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
     limit: number,
     skip: number,
   ): Promise<{ currentPage: number; totalPages: number; data: Order[] }> {
-    const orders = await this.prismaService.order.findMany({
-      skip,
-      take: limit,
-      include: {
-        client: true,
-        items: {
-          include: {
-            product: { include: { category: true } },
+    const safeLimit = Math.max(1, Math.min(limit, 100));
+    const safeSkip = Math.max(0, skip);
+
+    try {
+      const orders = await this.prismaService.order.findMany({
+        skip: safeSkip,
+        take: safeLimit,
+        include: {
+          client: true,
+          items: {
+            include: {
+              product: { include: { category: true } },
+            },
           },
         },
-      },
-      orderBy: {
-        created_at: 'desc',
-      },
-    });
+        orderBy: {
+          created_at: 'desc',
+        },
+      });
 
-    const totalItems = await this.prismaService.order.count();
+      const totalItems = await this.prismaService.order.count();
+      const currentPage = Math.floor(safeSkip / safeLimit) + 1;
+      const totalPages = Math.ceil(totalItems / safeLimit);
 
+<<<<<<< HEAD
     return {
       currentPage: Math.floor(skip / limit) + 1,
       totalPages: Math.ceil(totalItems / limit),
@@ -169,16 +180,59 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
             id: new CategoryId(itemData.product.category.id),
             name: itemData.product.category.name,
             description: itemData.product.category.description,
+=======
+      return {
+        currentPage,
+        totalPages,
+        data: orders.map((order) => {
+          const items = order.items.map((itemData) => {
+            const category = new Category({
+              id: new CategoryId(itemData.product.category.id),
+              name: itemData.product.category.name,
+              description: itemData.product.category.description,
+            });
+
+            const product = new Product({
+              id: new ProductId(itemData.product.id),
+              name: itemData.product.name,
+              description: itemData.product.description,
+              price: itemData.product.price,
+              imageUrl: itemData.product.imageUrl,
+              category,
+            });
+
+            return new OrderItem({
+              id: new OrderItemId(itemData.id),
+              orderId: new OrderId(order.id),
+              product,
+              quantity: itemData.quantity,
+              notes: itemData.notes,
+            });
+>>>>>>> b262a99b357a6ece920c7e35dbb4aa8688d82c9c
           });
 
-          const product = new Product({
-            id: new ProductId(itemData.product.id),
-            name: itemData.product.name,
-            description: itemData.product.description,
-            price: itemData.product.price,
-            imageUrl: itemData.product.imageUrl,
-            category,
+          return Order.create({
+            id: new OrderId(order.id),
+            items,
+            completedAt: order.completed_at,
+            createdAt: order.created_at,
+            orderCode: order.order_code,
+            paymentStatus: order.payment_status as StatusPayment,
+            preparationStarted: order.preparation_started,
+            readyAt: order.ready_at,
+            status: order.status as StatusOrder,
+            total: order.total,
+            client: order.client
+              ? Client.create({
+                  id: new ClientId(order.client.id),
+                  name: order.client.name,
+                  email: order.client.email,
+                  cpf: order.client.cpf,
+                  createdAt: order.client.created_at,
+                })
+              : null,
           });
+<<<<<<< HEAD
 
           return new OrderItem({
             id: new OrderItemId(itemData.id),
@@ -213,5 +267,12 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         });
       }),
     };
+=======
+        }),
+      };
+    } catch (error) {
+      throw new Error(`Erro ao buscar pedidos: ${error.message}`);
+    }
+>>>>>>> b262a99b357a6ece920c7e35dbb4aa8688d82c9c
   }
 }

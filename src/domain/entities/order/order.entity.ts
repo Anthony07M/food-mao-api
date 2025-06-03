@@ -2,6 +2,7 @@ import { Uuid } from 'src/adapters/shared/value-objects/uui.vo';
 import { Client } from '../client/client.entity';
 import { randomUUID } from 'node:crypto';
 import { OrderItem, OrderItemId } from '../order_item/order-item.entity';
+import { BadRequestException } from '@nestjs/common';
 
 export class OrderId extends Uuid {}
 export type StatusOrder =
@@ -11,7 +12,10 @@ export type StatusOrder =
   | 'In_Progress'
   | 'Confirmed'
   | 'Rejected'
-  | 'Started';
+  | 'Received'
+  | 'Ready'
+  | 'Concluded_not_received';
+
 export type StatusPayment =
   | 'Pending'
   | 'Canceled'
@@ -84,5 +88,56 @@ export class Order {
     this.items = [
       ...this.items.filter((item) => item.id.toString() !== itemId.toString()),
     ];
+  }
+
+  initPreparation() {
+    if (this.paymentStatus !== 'Concluded') {
+      throw new BadRequestException('Payment status must be concluded');
+    }
+
+    this.preparationStarted = new Date();
+  }
+
+  confirmOrder() {
+    this.status = 'Confirmed';
+  }
+
+  receivedOrder() {
+    this.status = 'Received';
+  }
+
+  finalizyPreparation() {
+    if (this.status !== 'In_Progress') {
+      throw new BadRequestException(
+        'Order must be "In_Progress" to be marked as ready.',
+      );
+    }
+
+    if (this.readyAt !== null) {
+      throw new BadRequestException('Order has already been marked as ready.');
+    }
+
+    this.status = 'Ready';
+    this.readyAt = new Date();
+  }
+
+  concludedOrder() {
+    if (this.paymentStatus === 'Concluded' && this.status === 'Ready') {
+      const currentDate = new Date();
+      const MINUTES = 30;
+
+      const diffEmMilissegundos = Math.abs(
+        currentDate.getTime() - this.readyAt!.getTime(),
+      );
+
+      const minutos = Math.floor(diffEmMilissegundos / (1000 * 60));
+
+      if (minutos > MINUTES) {
+        this.status = 'Concluded_not_received';
+        return;
+      }
+
+      this.status = 'Concluded';
+    }
   }
 }

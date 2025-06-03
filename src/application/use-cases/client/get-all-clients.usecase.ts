@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PaginatedResult } from 'src/adapters/shared/repositories/repository.interface';
-import { Client } from 'src/domain/entities/client/client.entity';
 import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client/client.repository.persistence';
 
-// Export this as the response type for the controller to use
-export type GetAllClientsResponse = PaginatedResult<Client>;
+export type GetAllClientsResponse = PaginatedResult<{
+  id: string;
+  name: string;
+  email: string;
+  cpf: string;
+}>;
 
 @Injectable()
 export class GetAllClientsUseCase {
@@ -13,12 +16,16 @@ export class GetAllClientsUseCase {
   ) {}
 
   async execute(
-    limit: number = 10,
+    limit: number = 100,
     page: number = 1,
   ): Promise<GetAllClientsResponse> {
-    // Calculate the number of items to skip
-    const skip = (page - 1) * limit;
+    const { currentPage, data, totalPages } =
+      await this.clientRepositoryPersistence.findAll(limit, page);
 
-    return this.clientRepositoryPersistence.findAll(limit, skip);
+    return {
+      currentPage,
+      totalPages,
+      data: data.map(({ id, ...client }) => ({ id: id.toString(), ...client })),
+    };
   }
 }

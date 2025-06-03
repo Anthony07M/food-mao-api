@@ -4,64 +4,32 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  IsUrl,
   IsUUID,
+  Min,
+  ValidateNested,
 } from 'class-validator';
 
-class CategoryDto {
+export class ItemDto {
+  @IsNotEmpty()
   @IsUUID()
-  @IsNotEmpty()
-  id: string;
+  productId: string;
 
-  @IsString()
   @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsNotEmpty()
-  description: string;
-}
-
-class ProductDto {
-  @IsUUID()
-  @IsNotEmpty()
-  id: string;
-
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
   @IsNumber()
-  @IsNotEmpty()
-  price: number;
-
-  @IsString()
-  @IsNotEmpty()
-  description: string;
-
-  @IsUrl()
-  @IsNotEmpty()
-  imageUrl: string;
-
-  @IsNotEmpty()
-  category: CategoryDto;
-}
-
-class ItemDto {
-  @IsNumber()
-  @IsNotEmpty()
+  @Min(1)
   quantity: number;
-
-  @IsOptional()
-  @IsString()
-  notes?: string | null;
-
-  @IsNotEmpty()
-  product: ProductDto;
 }
 
 export class CreateOrderDto {
-  @IsNotEmpty()
+  @IsOptional()
+  @IsUUID()
+  clientId?: string;
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
   @IsArray()
+  @ValidateNested({ each: true })
   items: ItemDto[];
 }

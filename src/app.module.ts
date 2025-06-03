@@ -11,7 +11,7 @@ import { DeleteOrderUseCase } from './application/use-cases/order/delete-order.u
 import { GetAllOrdersUseCase } from './application/use-cases/order/get-all-orders.usecase';
 import { OrderRepositoryPersistence } from './infrastructure/persistence/prisma/order/order.repository.persistence';
 import { CategoryController } from './adapters/inbound/http/category/category.controller';
-import { CategoryRepositoryPersistence } from './infrastructure/persistence/prisma/category.repository.persistence';
+import { CategoryRepositoryPersistence } from './infrastructure/persistence/prisma/category/category.repository.persistence';
 import { CreateCategoryUseCase } from './application/use-cases/category/create-category.usecase';
 import { UpdateCategoryUseCase } from './application/use-cases/category/update-category.usecase';
 import { FindAllCategoriesUseCase } from './application/use-cases/category/find-all-categories.usecase';
@@ -22,7 +22,7 @@ import { FindProductByIdUseCase } from './application/use-cases/product/findById
 import { RemoveProductUseCase } from './application/use-cases/product/remove-product.usecase';
 import { UpdateProductUseCase } from './application/use-cases/product/update-product.usecase';
 import { PaymentUseCase } from './application/use-cases/payment/payment.usecase';
-import { ProductRepositoryPersistence } from './infrastructure/persistence/prisma/product.repository.persistence';
+import { ProductRepositoryPersistence } from './infrastructure/persistence/prisma/product/product.repository.persistence';
 import { PaymentRepositoryPersistence } from './infrastructure/persistence/mercadoPago/payment.repository.persistence';
 import { ProductController } from './adapters/inbound/http/product/product.controller';
 import { ClientModule } from './modules/client.module';

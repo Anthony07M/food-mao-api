@@ -58,6 +58,36 @@ describe('Unit test s', () => {
     expect(order.total).toEqual(246.88);
   });
 
+  it('should be set status Read', () => {
+    const product = Product.create({
+      name: 'Product Test',
+      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      description: 'Lorem ipsum',
+      imageUrl: 'http://test.com',
+      price: 123.44,
+    });
+
+    const orderItem = OrderItem.create({
+      product,
+      quantity: 2,
+      orderId: new OrderId(),
+    });
+
+    const order = Order.create({
+      items: [orderItem],
+    });
+
+    order.status = 'In_Progress';
+
+    expect(order.status).toEqual('In_Progress');
+    expect(order.readyAt).toBeNull();
+
+    order.finalizyPreparation();
+
+    expect(order.status).toEqual('Ready');
+    expect(order.readyAt).toBeInstanceOf(Date);
+  });
+
   it('should be throw error UUID invalid ', () => {
     void expect(() => {
       new OrderId('1234');

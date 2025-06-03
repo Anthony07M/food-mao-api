@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProductId } from 'src/domain/entities/product.entity';
-import { ProductRepositoryPersistence } from 'src/infrastructure/persistence/prisma/product.repository.persistence';
+import { ProductRepositoryPersistence } from 'src/infrastructure/persistence/prisma/product/product.repository.persistence';
 
 @Injectable()
 export class RemoveProductUseCase {
