@@ -4,25 +4,16 @@ export class UpdateOrderDto {
   @IsOptional()
   @IsString()
   @IsIn([
-    'Pending',
-    'Concluded',
-    'Canceled',
+    'Received',
     'In_Progress',
-    'Confirmed',
-    'Rejected',
-    'Started',
+    'Ready',
+    'Concluded',
+    'Concluded_not_received',
   ])
   status?:
-    | 'Pending'
-    | 'Concluded'
-    | 'Canceled'
+    | 'Received'
     | 'In_Progress'
-    | 'Confirmed'
-    | 'Rejected'
-    | 'Started';
-
-  @IsOptional()
-  @IsString()
-  @IsIn(['Pending', 'Canceled', 'GeneratedQRCode', 'Concluded'])
-  paymentStatus?: 'Pending' | 'Canceled' | 'GeneratedQRCode' | 'Concluded';
+    | 'Ready'
+    | 'Concluded'
+    | 'Concluded_not_received';
 }

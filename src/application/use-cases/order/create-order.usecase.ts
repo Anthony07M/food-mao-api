@@ -10,7 +10,7 @@ import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/pris
 interface OrderItemInput {
   productId: string;
   quantity: number;
-  notes?: string | null; 
+  notes?: string | null;
 }
 
 interface ICreateOrderUseCase {
@@ -26,24 +26,26 @@ export class CreateOrderUseCase {
     private readonly clientRepositoryPersistence: ClientRepositoryPersistence,
   ) {}
 
-  async execute(params: ICreateOrderUseCase) {
+  async execute({ items, clientId }: ICreateOrderUseCase) {
     const orderId = new OrderId();
 
     let client: Client | null = null;
-    if (params.clientId) {
+
+    if (clientId) {
       client = await this.clientRepositoryPersistence.findById(
-        new ClientId(params.clientId),
+        new ClientId(clientId),
       );
+
       if (!client) {
         throw new NotFoundException(
-          `Cliente com ID ${params.clientId} não encontrado`,
+          `Cliente com ID ${clientId} não encontrado`,
         );
       }
     }
 
-    const items: OrderItem[] = [];
+    const _items: OrderItem[] = [];
 
-    for (const itemInput of params.items) {
+    for (const itemInput of items) {
       const product = await this.productRepositoryPersistence.findById(
         new ProductId(itemInput.productId),
       );
@@ -57,7 +59,7 @@ export class CreateOrderUseCase {
       const orderItem = OrderItem.create({
         orderId,
         quantity: itemInput.quantity,
-        notes: itemInput.notes, 
+        notes: itemInput.notes,
         product,
       });
 
@@ -66,7 +68,7 @@ export class CreateOrderUseCase {
 
     const order = Order.create({
       id: orderId,
-      items,
+      _items,
       client,
     });
 
@@ -95,7 +97,7 @@ export class CreateOrderUseCase {
       items: order.items.map((item) => ({
         id: item.id.toString(),
         quantity: item.quantity,
-        notes: item.notes, 
+        notes: item.notes,
         product: {
           id: item.product.id.toString(),
           name: item.product.name,

@@ -19,10 +19,9 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
-  ApiExtraModels
 } from '@nestjs/swagger';
 import { CreateOrderUseCase } from 'src/application/use-cases/order/create-order.usecase';
-import { CreateOrderDto, CreateOrderItemDto } from './dto/create-order.dto';
+import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { FindByIdOrderUseCase } from 'src/application/use-cases/order/findById-order.usecase';
 import { UpdateOrderUseCase } from 'src/application/use-cases/order/update-order.usecase';
@@ -30,7 +29,6 @@ import { DeleteOrderUseCase } from 'src/application/use-cases/order/delete-order
 import { GetAllOrdersUseCase } from 'src/application/use-cases/order/get-all-orders.usecase';
 
 @ApiTags('Orders')
-@ApiExtraModels(CreateOrderItemDto, CreateOrderDto)
 @Controller('order')
 export class OrderController {
   @Inject(CreateOrderUseCase)
@@ -48,71 +46,14 @@ export class OrderController {
   @Inject(GetAllOrdersUseCase)
   private readonly getAllOrdersUseCase: GetAllOrdersUseCase;
 
-
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({
-    summary: 'Criar novo pedido',
-    description:
-      'Cria um novo pedido com base nos IDs dos produtos e quantidades fornecidas',
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Pedido criado com sucesso',
-    schema: {
-      example: {
-        id: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-        orderCode: 'ORD-1234567890',
-        client: {
-          id: 'client-uuid',
-          name: 'João Silva',
-          email: 'joao@email.com',
-          cpf: '12345678901',
-        },
-        status: 'Pending',
-        total: 38.4,
-        paymentStatus: 'Pending',
-        createdAt: '2023-12-01T10:30:00.000Z',
-        preparationStarted: null,
-        readyAt: null,
-        completedAt: null,
-        items: [
-          {
-            id: 'item-uuid',
-            quantity: 2,
-            notes: 'Sem cebola', // Notes específico do item
-            product: {
-              id: 'b619076d-c198-435f-aa6f-7361d752a160',
-              name: 'X-caboquinho',
-              price: 19.2,
-              description: 'x-caboquinho no pão',
-              imageUrl: 'http://x-caboquinho.png',
-              category: {
-                id: '80ca9b53-3ab7-4f6a-a574-2c814766287c',
-                name: 'Sanduiches',
-                description: 'Sanduíches artesanais',
-              },
-            },
-          },
-        ],
-      },
-    },
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Produto ou cliente não encontrado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Dados inválidos fornecidos',
-  })
   async create(@Body() createOrderDto: CreateOrderDto) {
     return await this.createOrderUseCase.execute({
       clientId: createOrderDto.clientId,
       items: createOrderDto.items.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
-        notes: item.notes, 
       })),
     });
   }
@@ -142,7 +83,6 @@ export class OrderController {
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
   ) {
-
     const validLimit = Math.max(1, Math.min(limit || 10, 100)); // Entre 1 e 100
     const validPage = Math.max(1, page || 1); // Mínimo 1
     const skip = (validPage - 1) * validLimit; // Sempre >= 0
@@ -197,7 +137,6 @@ export class OrderController {
     return await this.updateOrderUseCase.execute({
       id: orderId,
       status: updateOrderDto.status,
-      paymentStatus: updateOrderDto.paymentStatus,
     });
   }
 
