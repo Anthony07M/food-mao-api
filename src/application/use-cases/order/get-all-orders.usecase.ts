@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order/order.repository.persistence';
 
@@ -11,7 +8,6 @@ export class GetAllOrdersUseCase {
   ) {}
 
   async execute(limit: number, skip: number) {
-
     const validLimit = Math.max(1, Math.min(limit || 10, 100));
     const validSkip = Math.max(0, skip || 0);
 
@@ -35,6 +31,13 @@ export class GetAllOrdersUseCase {
         data: result.data.map((order) => ({
           id: order.id.toString(),
           orderCode: order.orderCode,
+          status: order.status,
+          total: order.calculateTotal(),
+          paymentStatus: order.paymentStatus,
+          createdAt: order.createdAt,
+          preparationStarted: order.preparationStarted,
+          readyAt: order.readyAt,
+          completedAt: order.completedAt,
           client: order.client
             ? {
                 id: order.client.id.toString(),
@@ -43,13 +46,6 @@ export class GetAllOrdersUseCase {
                 cpf: order.client.cpf,
               }
             : null,
-          status: order.status,
-          total: order.calculateTotal(),
-          paymentStatus: order.paymentStatus,
-          createdAt: order.createdAt,
-          preparationStarted: order.preparationStarted,
-          readyAt: order.readyAt,
-          completedAt: order.completedAt,
           items: order.items.map((item) => ({
             id: item.id.toString(),
             quantity: item.quantity,

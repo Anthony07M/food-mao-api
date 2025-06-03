@@ -34,12 +34,15 @@ export class UpdateOrderUseCase {
       order.finalizyPreparation();
     }
 
+    if (status === 'Concluded') {
+      order.concludedOrder();
+    }
+
     await this.orderRepositoryPersistence.update(order);
 
     return {
       id: order.id.toString(),
       orderCode: order.orderCode,
-      client: order.client,
       status: order.status,
       total: order.calculateTotal(),
       paymentStatus: order.paymentStatus,
@@ -47,6 +50,7 @@ export class UpdateOrderUseCase {
       preparationStarted: order.preparationStarted,
       readyAt: order.readyAt,
       completedAt: order.completedAt,
+      client: order.client,
       items: order.items.map((item) => {
         return {
           id: item.id.toString(),

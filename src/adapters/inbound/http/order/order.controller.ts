@@ -49,13 +49,7 @@ export class OrderController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createOrderDto: CreateOrderDto) {
-    return await this.createOrderUseCase.execute({
-      clientId: createOrderDto.clientId,
-      items: createOrderDto.items.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-      })),
-    });
+    return await this.createOrderUseCase.execute(createOrderDto);
   }
 
   @Get()

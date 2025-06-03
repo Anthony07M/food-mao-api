@@ -9,7 +9,6 @@ export interface OrderItemConstructorParams {
   orderId: OrderId;
   product: Product;
   quantity: number;
-  notes?: string | null;
 }
 
 export class OrderItem {
@@ -24,7 +23,6 @@ export class OrderItem {
     this.id = params.id ?? new OrderItemId();
     this.orderId = params.orderId;
     this.quantity = params.quantity;
-    this.notes = params.notes ?? null;
     this.product = params.product;
   }
 

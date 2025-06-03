@@ -16,6 +16,7 @@ interface OrderItemInput {
 interface ICreateOrderUseCase {
   items: OrderItemInput[];
   clientId?: string | null;
+  notes?: string;
 }
 
 @Injectable()
@@ -26,7 +27,7 @@ export class CreateOrderUseCase {
     private readonly clientRepositoryPersistence: ClientRepositoryPersistence,
   ) {}
 
-  async execute({ items, clientId }: ICreateOrderUseCase) {
+  async execute({ items, clientId, notes }: ICreateOrderUseCase) {
     const orderId = new OrderId();
 
     let client: Client | null = null;
@@ -44,7 +45,6 @@ export class CreateOrderUseCase {
     }
 
     const _items: OrderItem[] = [];
-
     for (const itemInput of items) {
       const product = await this.productRepositoryPersistence.findById(
         new ProductId(itemInput.productId),
@@ -59,16 +59,16 @@ export class CreateOrderUseCase {
       const orderItem = OrderItem.create({
         orderId,
         quantity: itemInput.quantity,
-        notes: itemInput.notes,
-        product,
+        product: product,
       });
 
-      items.push(orderItem);
+      _items.push(orderItem);
     }
 
     const order = Order.create({
       id: orderId,
-      _items,
+      notes,
+      items: _items,
       client,
     });
 
@@ -79,6 +79,14 @@ export class CreateOrderUseCase {
     return {
       id: order.id.toString(),
       orderCode: order.orderCode,
+      status: order.status,
+      total: order.total,
+      notes: order.notes,
+      paymentStatus: order.paymentStatus,
+      createdAt: order.createdAt,
+      preparationStarted: order.preparationStarted,
+      readyAt: order.readyAt,
+      completedAt: order.completedAt,
       client: order.client
         ? {
             id: order.client.id.toString(),
@@ -87,13 +95,6 @@ export class CreateOrderUseCase {
             cpf: order.client.cpf,
           }
         : null,
-      status: order.status,
-      total: order.total,
-      paymentStatus: order.paymentStatus,
-      createdAt: order.createdAt,
-      preparationStarted: order.preparationStarted,
-      readyAt: order.readyAt,
-      completedAt: order.completedAt,
       items: order.items.map((item) => ({
         id: item.id.toString(),
         quantity: item.quantity,

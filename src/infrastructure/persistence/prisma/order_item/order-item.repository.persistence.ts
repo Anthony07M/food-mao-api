@@ -23,7 +23,6 @@ export class OrderItemRepositoryPersistence
         order_id: entity.orderId.toString(),
         product_id: entity.productId,
         quantity: entity.quantity,
-        notes: entity.notes,
       },
     });
   }
@@ -45,7 +44,6 @@ export class OrderItemRepositoryPersistence
         order_id: entity.orderId.toString(),
         product_id: entity.productId,
         quantity: entity.quantity,
-        notes: entity.notes,
       },
     });
   }
@@ -65,7 +63,6 @@ export class OrderItemRepositoryPersistence
       id: new OrderItemId(orderItem.id),
       orderId: new OrderId(orderItem.order_id),
       quantity: orderItem.quantity,
-      notes: orderItem.notes,
       product: Product.create({
         id: new ProductId(orderItem.product.id),
         name: orderItem.product.name,
@@ -103,7 +100,6 @@ export class OrderItemRepositoryPersistence
           id: new OrderItemId(orderItem.id),
           orderId: new OrderId(orderItem.order_id),
           quantity: orderItem.quantity,
-          notes: orderItem.notes,
           product: Product.create({
             id: new ProductId(orderItem.product.id),
             name: orderItem.product.name,
@@ -146,7 +142,6 @@ export class OrderItemRepositoryPersistence
           }),
         }),
         quantity: orderItem.quantity,
-        notes: orderItem.notes,
       }),
     );
   }

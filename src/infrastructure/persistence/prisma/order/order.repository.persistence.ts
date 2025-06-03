@@ -32,6 +32,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         client_id: order.client ? order.client.id.toString() : null,
         completed_at: order.completedAt,
         ready_at: order.readyAt,
+        notes: order.notes,
         preparation_started: order.preparationStarted,
         items: {
           createMany: {
@@ -39,7 +40,6 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
               id: item.id.toString(),
               product_id: item.product.id.toString(),
               quantity: item.quantity,
-              notes: item.notes,
             })),
           },
         },
@@ -67,6 +67,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         payment_status: order.paymentStatus,
         ready_at: order.readyAt,
         preparation_started: order.preparationStarted,
+        notes: order.notes,
         status: order.status,
         total: order.calculateTotal(),
       },
@@ -109,13 +110,11 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         orderId: new OrderId(order.id),
         product,
         quantity: itemData.quantity,
-        notes: itemData.notes,
       });
     });
 
     return Order.create({
       id: new OrderId(order.id),
-      items,
       completedAt: order.completed_at,
       createdAt: order.created_at,
       orderCode: order.order_code,
@@ -124,6 +123,8 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
       readyAt: order.ready_at,
       status: order.status as StatusOrder,
       total: order.total,
+      notes: order.notes,
+      items,
       client: order.client
         ? Client.create({
             id: new ClientId(order.client.id),
@@ -189,7 +190,6 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
               orderId: new OrderId(order.id),
               product,
               quantity: itemData.quantity,
-              notes: itemData.notes,
             });
           });
 
@@ -204,6 +204,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
             readyAt: order.ready_at,
             status: order.status as StatusOrder,
             total: order.total,
+            notes: order.notes,
             client: order.client
               ? Client.create({
                   id: new ClientId(order.client.id),

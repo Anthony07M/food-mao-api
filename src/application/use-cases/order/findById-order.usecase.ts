@@ -18,7 +18,6 @@ export class FindByIdOrderUseCase {
     return {
       id: order.id.toString(),
       orderCode: order.orderCode,
-      client: order.client,
       status: order.status,
       total: order.calculateTotal(),
       paymentStatus: order.paymentStatus,
@@ -26,6 +25,14 @@ export class FindByIdOrderUseCase {
       preparationStarted: order.preparationStarted,
       readyAt: order.readyAt,
       completedAt: order.completedAt,
+      client: order.client
+        ? {
+            id: order.client.id.toString(),
+            name: order.client.name,
+            email: order.client.email,
+            cpf: order.client.cpf,
+          }
+        : null,
       items: order.items.map((item) => {
         return {
           id: item.id.toString(),

@@ -6,12 +6,11 @@ import {
   IsString,
   IsUUID,
   Min,
-  ValidateNested,
 } from 'class-validator';
 
 export class ItemDto {
   @IsNotEmpty()
-  @IsUUID()
+  @IsUUID('all', { message: 'product must be UUID valid' })
   productId: string;
 
   @IsNotEmpty()
@@ -30,6 +29,5 @@ export class CreateOrderDto {
   notes?: string;
 
   @IsArray()
-  @ValidateNested({ each: true })
   items: ItemDto[];
 }
