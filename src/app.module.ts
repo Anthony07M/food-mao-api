@@ -1,7 +1,10 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { OrderController } from './adapters/inbound/http/order/order.controller';
+import { PaymentController } from './adapters/outbound/http/payment/payment.controller';
+
 import { PrismaService } from './infrastructure/config/prisma/prisma.service';
+import { MercadoPagoService } from './infrastructure/config/mercadoPago/mercado-pago.service';
 import { CreateOrderUseCase } from './application/use-cases/order/create-order.usecase';
 import { UpdateOrderUseCase } from './application/use-cases/order/update-order.usecase';
 import { DeleteOrderUseCase } from './application/use-cases/order/delete-order.usecase';
@@ -18,7 +21,9 @@ import { FindAllProductsUseCase } from './application/use-cases/product/find-all
 import { FindProductByIdUseCase } from './application/use-cases/product/findById.usecase';
 import { RemoveProductUseCase } from './application/use-cases/product/remove-product.usecase';
 import { UpdateProductUseCase } from './application/use-cases/product/update-product.usecase';
+import { PaymentUseCase } from './application/use-cases/payment/payment.usecase';
 import { ProductRepositoryPersistence } from './infrastructure/persistence/prisma/product.repository.persistence';
+import { PaymentRepositoryPersistence } from './infrastructure/persistence/mercadoPago/payment.repository.persistence';
 import { ProductController } from './adapters/inbound/http/product/product.controller';
 import { ClientModule } from './modules/client.module';
 import { OrderItemModule } from './modules/order-item.module';
@@ -27,9 +32,18 @@ import { LoggerMiddleware } from './adapters/inbound/http/morgan/morgan.middlewa
 
 @Module({
   imports: [ClientModule, OrderItemModule, ConfigModule.forRoot()],
-  controllers: [OrderController, CategoryController, ProductController],
+  controllers: [
+    OrderController,
+    CategoryController,
+    ProductController,
+    PaymentController,
+  ],
   providers: [
     PrismaService,
+    // Payment
+    MercadoPagoService,
+    PaymentRepositoryPersistence,
+    PaymentUseCase,
     // Order Use Cases
     CreateOrderUseCase,
     FindByIdOrderUseCase,
