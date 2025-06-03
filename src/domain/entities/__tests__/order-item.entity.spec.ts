@@ -21,7 +21,6 @@ describe('OrderItem Entity', () => {
       orderId: new OrderId(),
       product,
       quantity: 2,
-      notes: 'Extra sauce',
     };
 
     const orderItem = OrderItem.create(params);
@@ -32,28 +31,6 @@ describe('OrderItem Entity', () => {
     expect(orderItem.id).toBeInstanceOf(OrderItemId);
     expect(orderItem.product).toEqual(product);
     expect(orderItem.quantity).toEqual(2);
-    expect(orderItem.notes).toEqual('Extra sauce');
-  });
-
-  it('should create OrderItem without notes', () => {
-    const product = Product.create({
-      name: 'Product Test',
-      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
-      description: 'Lorem ipsum',
-      imageUrl: 'http://test.com',
-      price: 123.44,
-    });
-
-    const params: OrderItemConstructorParams = {
-      orderId: new OrderId(),
-      product,
-      quantity: 1,
-    };
-
-    const orderItem = OrderItem.create(params);
-
-    expect(orderItem).toBeInstanceOf(OrderItem);
-    expect(orderItem.notes).toBeNull();
   });
 
   it('should throw error for invalid UUID', () => {
