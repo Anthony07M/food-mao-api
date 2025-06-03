@@ -29,6 +29,7 @@ export interface OrderConstructrorParams {
   status?: StatusOrder;
   total?: number;
   paymentId?: string | null;
+  notes?: string | null;
   paymentStatus?: StatusPayment;
   createdAt?: Date;
   preparationStarted?: Date | null;
@@ -44,6 +45,7 @@ export class Order {
   status: StatusOrder;
   total: number;
   paymentId: string | null;
+  notes?: string | null;
   paymentStatus: StatusPayment;
   createdAt: Date;
   preparationStarted: Date | null;
@@ -58,6 +60,7 @@ export class Order {
     this.status = params.status ?? 'Pending';
     this.total = params.total ?? 0;
     this.paymentId = params.paymentId ?? null;
+    this.notes = params.notes ?? null;
     this.paymentStatus = params.paymentStatus ?? 'Pending';
     this.createdAt = params.createdAt ?? new Date();
     this.preparationStarted = params.preparationStarted ?? null;
@@ -96,6 +99,7 @@ export class Order {
     }
 
     this.preparationStarted = new Date();
+    this.status = 'In_Progress';
   }
 
   confirmOrder() {
@@ -103,6 +107,14 @@ export class Order {
   }
 
   receivedOrder() {
+    if (this.paymentStatus !== 'Concluded') {
+      throw new BadRequestException('Payment status must be Concluded');
+    }
+
+    if (this.status !== 'Pending') {
+      throw new BadRequestException('Order status must be Pending');
+    }
+
     this.status = 'Received';
   }
 

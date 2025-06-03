@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
->>>>>>> b262a99b357a6ece920c7e35dbb4aa8688d82c9c
 import { Injectable } from '@nestjs/common';
 import { Client, ClientId } from 'src/domain/entities/client/client.entity';
 import {
@@ -36,6 +32,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         client_id: order.client ? order.client.id.toString() : null,
         completed_at: order.completedAt,
         ready_at: order.readyAt,
+        notes: order.notes,
         preparation_started: order.preparationStarted,
         items: {
           createMany: {
@@ -43,7 +40,6 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
               id: item.id.toString(),
               product_id: item.product.id.toString(),
               quantity: item.quantity,
-              notes: item.notes,
             })),
           },
         },
@@ -72,6 +68,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         payment_status: order.paymentStatus,
         ready_at: order.readyAt,
         preparation_started: order.preparationStarted,
+        notes: order.notes,
         status: order.status,
         total: order.calculateTotal(),
       },
@@ -114,13 +111,11 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         orderId: new OrderId(order.id),
         product,
         quantity: itemData.quantity,
-        notes: itemData.notes,
       });
     });
 
     return Order.create({
       id: new OrderId(order.id),
-      items,
       completedAt: order.completed_at,
       createdAt: order.created_at,
       orderCode: order.order_code,
@@ -130,6 +125,8 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
       readyAt: order.ready_at,
       status: order.status as StatusOrder,
       total: order.total,
+      notes: order.notes,
+      items,
       client: order.client
         ? Client.create({
             id: new ClientId(order.client.id),
@@ -170,17 +167,6 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
       const currentPage = Math.floor(safeSkip / safeLimit) + 1;
       const totalPages = Math.ceil(totalItems / safeLimit);
 
-<<<<<<< HEAD
-    return {
-      currentPage: Math.floor(skip / limit) + 1,
-      totalPages: Math.ceil(totalItems / limit),
-      data: orders.map((order) => {
-        const items = order.items.map((itemData) => {
-          const category = new Category({
-            id: new CategoryId(itemData.product.category.id),
-            name: itemData.product.category.name,
-            description: itemData.product.category.description,
-=======
       return {
         currentPage,
         totalPages,
@@ -206,9 +192,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
               orderId: new OrderId(order.id),
               product,
               quantity: itemData.quantity,
-              notes: itemData.notes,
             });
->>>>>>> b262a99b357a6ece920c7e35dbb4aa8688d82c9c
           });
 
           return Order.create({
@@ -222,6 +206,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
             readyAt: order.ready_at,
             status: order.status as StatusOrder,
             total: order.total,
+            notes: order.notes,
             client: order.client
               ? Client.create({
                   id: new ClientId(order.client.id),
@@ -232,47 +217,10 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
                 })
               : null,
           });
-<<<<<<< HEAD
-
-          return new OrderItem({
-            id: new OrderItemId(itemData.id),
-            orderId: new OrderId(order.id),
-            product,
-            quantity: itemData.quantity,
-            notes: itemData.notes,
-          });
-        });
-
-        return Order.create({
-          id: new OrderId(order.id),
-          items,
-          completedAt: order.completed_at,
-          createdAt: order.created_at,
-          orderCode: order.order_code,
-          paymentId: order.payment_id,
-          paymentStatus: order.payment_status as StatusPayment,
-          preparationStarted: order.preparation_started,
-          readyAt: order.ready_at,
-          status: order.status as StatusOrder,
-          total: order.total,
-          client: order.client
-            ? Client.create({
-                id: new ClientId(order.client.id),
-                name: order.client.name,
-                email: order.client.email,
-                cpf: order.client.cpf,
-                createdAt: order.client.created_at,
-              })
-            : null,
-        });
-      }),
-    };
-=======
         }),
       };
     } catch (error) {
       throw new Error(`Erro ao buscar pedidos: ${error.message}`);
     }
->>>>>>> b262a99b357a6ece920c7e35dbb4aa8688d82c9c
   }
 }

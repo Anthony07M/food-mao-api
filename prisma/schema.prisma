@@ -13,47 +13,48 @@ model Client {
   email      String   @unique
   cpf        String   @unique
   created_at DateTime
-  orders     Order[]  // Relationship with Order model
+  orders     Order[]
 
   @@map("clients")
 }
 
 model Category {
-  id          String @id
+  id          String    @id
   name        String
   description String
-  products    Product[] // Relationship with Product model
+  products    Product[]
 
   @@map("categories")
 }
 
 model Product {
-  id          String   @id
+  id          String      @id
   name        String
   description String
   price       Float
-  imageUrl    String   @map("image_url")
-  category    Category @relation(fields: [categoryId], references: [id])
+  imageUrl    String      @map("image_url")
+  category    Category    @relation(fields: [categoryId], references: [id])
   categoryId  String
-  orderItems  OrderItem[] // Relationship with OrderItem model
+  orderItems  OrderItem[]
 
   @@map("products")
 }
 
 model Order {
-  id                  String    @id
+  id                  String      @id
   order_code          String
   client_id           String?
   status              String
   total               Float
   payment_id          String?
   payment_status      String
+  notes               String?
   created_at          DateTime
   preparation_started DateTime?
   ready_at            DateTime?
   completed_at        DateTime?
-  client              Client?   @relation(fields: [client_id], references: [id])
-  items               OrderItem[] // Relationship with OrderItem model
+  client              Client?     @relation(fields: [client_id], references: [id])
+  items               OrderItem[]
 
   @@map("orders")
 }
@@ -63,7 +64,6 @@ model OrderItem {
   order_id   String
   product_id String
   quantity   Int
-  notes      String?
   order      Order   @relation(fields: [order_id], references: [id])
   product    Product @relation(fields: [product_id], references: [id])
 

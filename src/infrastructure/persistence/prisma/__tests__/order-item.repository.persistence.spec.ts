@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '../../../config/prisma/prisma.service';
 import { OrderRepositoryPersistence } from '../order/order.repository.persistence';
@@ -11,10 +7,14 @@ import {
   OrderItemId,
 } from '../../../../domain/entities/order_item/order-item.entity';
 import { Product, ProductId } from '../../../../domain/entities/product.entity';
-// eslint-disable-next-line prettier/prettier
-import { Category, CategoryId } from '../../../../domain/entities/category.entity';
-// eslint-disable-next-line prettier/prettier
-import { Client, ClientId } from '../../../../domain/entities/client/client.entity';
+import {
+  Category,
+  CategoryId,
+} from '../../../../domain/entities/category.entity';
+import {
+  Client,
+  ClientId,
+} from '../../../../domain/entities/client/client.entity';
 
 describe('OrderRepositoryPersistence', () => {
   let repository: OrderRepositoryPersistence;
@@ -46,7 +46,9 @@ describe('OrderRepositoryPersistence', () => {
     }).compile();
 
     // eslint-disable-next-line prettier/prettier
-    repository = module.get<OrderRepositoryPersistence>(OrderRepositoryPersistence);
+    repository = module.get<OrderRepositoryPersistence>(
+      OrderRepositoryPersistence,
+    );
     prismaService = module.get<PrismaService>(PrismaService);
   });
 
@@ -77,11 +79,11 @@ describe('OrderRepositoryPersistence', () => {
       const orderItem = OrderItem.create({
         orderId: new OrderId(),
         quantity: 2,
-        notes: 'No special requests',
         product,
       });
 
       const order = Order.create({
+        notes: 'lorem note',
         items: [orderItem],
       });
 
@@ -98,6 +100,7 @@ describe('OrderRepositoryPersistence', () => {
           status: order.status,
           total: order.calculateTotal(),
           payment_status: order.paymentStatus,
+          notes: 'lorem note',
           created_at: order.createdAt,
           client_id: null,
           completed_at: order.completedAt,
@@ -110,7 +113,6 @@ describe('OrderRepositoryPersistence', () => {
                   id: orderItem.id.toString(),
                   product_id: product.id.toString(),
                   quantity: 2,
-                  notes: 'No special requests',
                 },
               ],
             },
@@ -146,7 +148,6 @@ describe('OrderRepositoryPersistence', () => {
             order_id: orderId.toString(),
             product_id: productId.toString(),
             quantity: 2,
-            notes: 'No special requests',
             product: {
               id: productId.toString(),
               name: 'Smartphone',
@@ -247,6 +248,7 @@ describe('OrderRepositoryPersistence', () => {
       // Arrange
       const order = Order.create({
         items: [],
+        notes: null,
         status: 'In_Progress',
         paymentStatus: 'Concluded',
       });
@@ -263,6 +265,7 @@ describe('OrderRepositoryPersistence', () => {
           client_id: null,
           completed_at: order.completedAt,
           order_code: order.orderCode,
+          notes: null,
           payment_status: order.paymentStatus,
           ready_at: order.readyAt,
           preparation_started: order.preparationStarted,
@@ -301,7 +304,7 @@ describe('OrderRepositoryPersistence', () => {
 
       const validUuid1 = '550e8400-e29b-41d4-a716-446655440000';
       const validUuid2 = '550e8400-e29b-41d4-a716-446655440001';
-      
+
       const mockOrdersData = [
         {
           id: validUuid1,
