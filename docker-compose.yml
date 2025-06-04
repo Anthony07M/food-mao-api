@@ -1,28 +1,54 @@
+version: '3.8'
+
 services:
   db:
-    image: postgres:17
-    restart: always
+    image: postgres:17-alpine
+    container_name: food-mao-db
+    restart: unless-stopped
     ports:
       - '5432:5432'
     environment:
       POSTGRES_PASSWORD: 1234
       POSTGRES_USER: root
       POSTGRES_DB: food_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
     networks:
       - food-mao-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d food_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   api:
-    build: .
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: food-mao-api
-    tty: true
+    restart: unless-stopped
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://root:1234@db:5432/food_db
+      - PORT=3000
     env_file:
       - .env
-    command: npm run start:prod
     networks:
       - food-mao-net
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    volumes:
+      - ./logs:/app/logs
+
 networks:
   food-mao-net:
     driver: bridge
+    name: food-mao-network
+
+volumes:
+  postgres_data:
+    driver: local
