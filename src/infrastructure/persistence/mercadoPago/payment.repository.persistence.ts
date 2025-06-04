@@ -47,4 +47,13 @@ export class PaymentRepositoryPersistence {
         response.point_of_interaction!.transaction_data!.qr_code_base64 || '',
     };
   }
+
+  async checkoutPayment(paymentId: string): Promise<any> {
+    const client = this.MercadoPagoService.createClientPayment(
+      process.env.MERCADO_PAGO_ACCESS_TOKEN as string,
+    );
+
+    const response = await client.get({ id: paymentId });
+    return response.status;
+  }
 }

@@ -1,5 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { OrderController } from './adapters/inbound/http/order/order.controller';
 import { PaymentController } from './adapters/outbound/http/payment/payment.controller';
 
@@ -29,9 +30,15 @@ import { ClientModule } from './modules/client.module';
 import { OrderItemModule } from './modules/order-item.module';
 import { FindByIdOrderUseCase } from './application/use-cases/order/findById-order.usecase';
 import { LoggerMiddleware } from './adapters/inbound/http/morgan/morgan.middleware';
+import { TasksServiceCheckoutPayment } from './adapters/outbound/auto/payment/payment.cron';
 
 @Module({
-  imports: [ClientModule, OrderItemModule, ConfigModule.forRoot()],
+  imports: [
+    ClientModule,
+    OrderItemModule,
+    ConfigModule.forRoot(),
+    ScheduleModule.forRoot(),
+  ],
   controllers: [
     OrderController,
     CategoryController,
@@ -44,6 +51,7 @@ import { LoggerMiddleware } from './adapters/inbound/http/morgan/morgan.middlewa
     MercadoPagoService,
     PaymentRepositoryPersistence,
     PaymentUseCase,
+    TasksServiceCheckoutPayment,
     // Order Use Cases
     CreateOrderUseCase,
     FindByIdOrderUseCase,
