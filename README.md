@@ -8,7 +8,7 @@ API RESTful para sistema de gestão de pedidos de comida, desenvolvida com NestJ
 
 - **[Aldair Azevedo](https://github.com/AldairAzevedo)** - RM361097
 - **[Andre Costa](https://github.com/andreneox)** - RM361095  
-- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361096
+- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361093
 
 ## 📋 Índice
 
@@ -659,7 +659,7 @@ Este projeto está sob a licença UNLICENSED.
 
 - **[Aldair Azevedo](https://github.com/AldairAzevedo)** - RM361097
 - **[Andre Costa](https://github.com/andreneox)** - RM361095  
-- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361096
+- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361093
 
 ---
 

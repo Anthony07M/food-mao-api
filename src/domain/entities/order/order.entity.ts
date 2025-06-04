@@ -111,11 +111,20 @@ export class Order {
       throw new BadRequestException('Payment status must be Concluded');
     }
 
-    if (this.status !== 'Pending') {
-      throw new BadRequestException('Order status must be Pending');
+    if (this.status === 'Confirmed') {
+      this.status = 'Received';
     }
 
-    this.status = 'Received';
+    if (
+      (this.status === 'Pending' ||
+        this.status === 'Canceled' ||
+        this.status === 'Concluded' ||
+        this.status === 'Concluded_not_received' ||
+        this.status === 'In_Progress',
+      this.status === 'Ready')
+    ) {
+      throw new BadRequestException('Order status must be Pending');
+    }
   }
 
   finalizyPreparation() {
@@ -131,25 +140,25 @@ export class Order {
 
     this.status = 'Ready';
     this.readyAt = new Date();
+    this.completedAt = new Date();
   }
 
   concludedOrder() {
-    if (this.paymentStatus === 'Concluded' && this.status === 'Ready') {
-      const currentDate = new Date();
-      const MINUTES = 30;
+    if (this.paymentStatus !== 'Concluded') {
+      throw new BadRequestException('Payment status must be Concluded');
+    }
 
-      const diffEmMilissegundos = Math.abs(
-        currentDate.getTime() - this.readyAt!.getTime(),
-      );
+    if (
+      this.status === 'Concluded' ||
+      this.status === 'Concluded_not_received'
+    ) {
+      throw new BadRequestException('Order has already been concluded');
+    }
 
-      const minutos = Math.floor(diffEmMilissegundos / (1000 * 60));
-
-      if (minutos > MINUTES) {
-        this.status = 'Concluded_not_received';
-        return;
-      }
-
+    if (this.status === 'Ready') {
       this.status = 'Concluded';
+    } else {
+      throw new BadRequestException('Order status must be Ready');
     }
   }
 }
