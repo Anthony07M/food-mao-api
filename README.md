@@ -7,8 +7,8 @@ API RESTful para sistema de gestão de pedidos de comida, desenvolvida com NestJ
 ## 👥 Equipe de Desenvolvimento
 
 - **[Aldair Azevedo](https://github.com/AldairAzevedo)** - RM361097
-- **[Andre Costa](https://github.com/andreneox)** - RM361093  
-- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361096
+- **[Andre Costa](https://github.com/andreneox)** - RM361095  
+- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361093
 
 ## 📋 Índice
 
