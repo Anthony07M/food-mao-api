@@ -7,6 +7,7 @@ import { GetOrderItemsByOrderUseCase } from 'src/application/use-cases/order_ite
 import { UpdateOrderItemUseCase } from 'src/application/use-cases/order_item/update-order-item.usecase';
 import { DeleteOrderItemUseCase } from 'src/application/use-cases/order_item/delete-order-item.usecase';
 import { OrderItemRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order_item/order-item.repository.persistence';
+import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order/order.repository.persistence';
 import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
 
 @Module({
@@ -14,6 +15,7 @@ import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
   providers: [
     PrismaService,
     OrderItemRepositoryPersistence,
+    OrderRepositoryPersistence,
     CreateOrderItemUseCase,
     GetAllOrderItemsUseCase,
     GetOrderItemByIdUseCase,
