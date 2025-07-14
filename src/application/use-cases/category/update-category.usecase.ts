@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CategoryId } from 'src/domain/entities/category.entity';
-import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category/category.repository.persistence';
+// update-category.usecase.ts
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { CategoryId } from 'src/domain/entities/category/category.entity';
+import { CategoryRepositoryInterface } from 'src/domain/repositories/category.repository.interface';
 
 export interface IUpdateCategoryUseCase {
   name?: string;
@@ -10,11 +11,12 @@ export interface IUpdateCategoryUseCase {
 @Injectable()
 export class UpdateCategoryUseCase {
   constructor(
-    private readonly categoryRepositoryPersistence: CategoryRepositoryPersistence,
+    @Inject('CategoryRepositoryInterface')
+    private readonly categoryRepository: CategoryRepositoryInterface,
   ) {}
 
   async execute(categoryId: string, props: IUpdateCategoryUseCase) {
-    const category = await this.categoryRepositoryPersistence.findById(
+    const category = await this.categoryRepository.findById(
       new CategoryId(categoryId),
     );
 
@@ -24,12 +26,12 @@ export class UpdateCategoryUseCase {
 
     category.updateValues(props);
 
-    await this.categoryRepositoryPersistence.update(category);
+    const updatedCategory = await this.categoryRepository.update(category);
 
     return {
-      id: category.id.toString(),
-      name: category.name,
-      description: category.description,
+      id: updatedCategory.id.toString(),
+      name: updatedCategory.name,
+      description: updatedCategory.description,
     };
   }
 }

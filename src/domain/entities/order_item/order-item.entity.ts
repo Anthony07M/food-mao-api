@@ -1,5 +1,5 @@
 import { Uuid } from 'src/adapters/shared/value-objects/uui.vo';
-import { Product } from '../product.entity';
+import { Product } from '../product/product.entity';
 import { OrderId } from '../order/order.entity';
 
 export class OrderItemId extends Uuid {}
@@ -26,7 +26,13 @@ export class OrderItem {
     this.product = params.product;
   }
 
-  static create(params: OrderItemConstructorParams): OrderItem {
+  static create(params: Omit<OrderItemConstructorParams, 'id'>): OrderItem {
+    if (!params.product) {
+      throw new Error('OrderItem must have a product.');
+    }
+    if (params.quantity == null || params.quantity <= 0) {
+      throw new Error('OrderItem quantity must be a positive number.');
+    }
     return new OrderItem(params);
   }
 }

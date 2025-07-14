@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Category, CategoryId } from 'src/domain/entities/category.entity';
+import { Category, CategoryId } from 'src/domain/entities/category/category.entity';
 import { CategoryRepositoryInterface } from 'src/domain/repositories/category.repository.interface';
 import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
 
@@ -9,7 +9,7 @@ export class CategoryRepositoryPersistence
 {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async save(category: Category): Promise<void> {
+  async save(category: Category): Promise<Category> {
     await this.prismaService.category.create({
       data: {
         id: category.id.toString(),
@@ -17,6 +17,7 @@ export class CategoryRepositoryPersistence
         description: category.description,
       },
     });
+    return category;
   }
 
   async remove(categoryId: CategoryId): Promise<void> {
@@ -25,7 +26,7 @@ export class CategoryRepositoryPersistence
     });
   }
 
-  async update(category: Category): Promise<void> {
+  async update(category: Category): Promise<Category> {
     await this.prismaService.category.update({
       where: { id: category.id.toString() },
       data: {
@@ -33,6 +34,7 @@ export class CategoryRepositoryPersistence
         description: category.description,
       },
     });
+    return category;
   }
 
   async findById(categoryId: CategoryId): Promise<Category | null> {
@@ -42,7 +44,7 @@ export class CategoryRepositoryPersistence
 
     if (!category) return null;
 
-    return Category.create({
+    return new Category({
       id: new CategoryId(category.id),
       name: category.name,
       description: category.description,
@@ -63,12 +65,13 @@ export class CategoryRepositoryPersistence
     return {
       currentPage: Math.floor(skip / limit) + 1,
       totalPages: Math.ceil(totalItems / limit),
-      data: categories.map((category) =>
-        Category.create({
-          id: new CategoryId(category.id),
-          name: category.name,
-          description: category.description,
-        }),
+      data: categories.map(
+        (category) =>
+          new Category({
+            id: new CategoryId(category.id),
+            name: category.name,
+            description: category.description,
+          }),
       ),
     };
   }

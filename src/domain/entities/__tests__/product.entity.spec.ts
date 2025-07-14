@@ -1,11 +1,11 @@
-import { Category } from '../category.entity';
-import { Product, ProductId } from '../product.entity';
+import { Category } from '../category/category.entity';
+import { Product, ProductId } from '../product/product.entity';
 
 describe('Unit test Product Entity', () => {
   it('should be create product success', () => {
     const input = {
       name: 'Product Test',
-      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      category: Category.create({ name: 'CPU1', description: 'CPU1 lorem' }),
       description: 'Lorem ipsum',
       imageUrl: 'http://test.com',
       price: 123.44,
@@ -28,7 +28,7 @@ describe('Unit test Product Entity', () => {
   it('should be update all values success', () => {
     const newValues = {
       name: 'new Product',
-      category: Category.create({ name: 'C2', description: 'C2 new' }),
+      category: Category.create({ name: 'CPU2', description: 'CPU2 new' }),
       description: 'new lorem',
       imageUrl: 'http://test2.com',
       price: 223.44,
@@ -36,7 +36,7 @@ describe('Unit test Product Entity', () => {
 
     const product = Product.create({
       name: 'Product Test',
-      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      category: Category.create({ name: 'CPU1', description: 'CPU1 lorem' }),
       description: 'Lorem ipsum',
       imageUrl: 'http://test.com',
       price: 123.44,
@@ -62,7 +62,7 @@ describe('Unit test Product Entity', () => {
   it('should be called function updateValues()', () => {
     const newValues = {
       name: 'new Product',
-      category: Category.create({ name: 'C2', description: 'C2 new' }),
+      category: Category.create({ name: 'CPU2', description: 'CPU2 new' }),
       description: 'new lorem',
       imageUrl: 'http://test2.com',
       price: 223.44,
@@ -70,7 +70,7 @@ describe('Unit test Product Entity', () => {
 
     const product = Product.create({
       name: 'Product Test',
-      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      category: Category.create({ name: 'CPU1', description: 'CPU1 lorem' }),
       description: 'Lorem ipsum',
       imageUrl: 'http://test.com',
       price: 123.44,

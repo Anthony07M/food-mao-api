@@ -1,5 +1,5 @@
 import { RepositoryInterface } from 'src/adapters/shared/repositories/repository.interface';
-import { Category, CategoryId } from '../entities/category.entity';
+import { Category, CategoryId } from '../entities/category/category.entity';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CategoryRepositoryInterface

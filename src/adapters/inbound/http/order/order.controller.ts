@@ -12,6 +12,8 @@ import {
   Query,
   HttpStatus,
   HttpCode,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -27,6 +29,10 @@ import { FindByIdOrderUseCase } from 'src/application/use-cases/order/findById-o
 import { UpdateOrderUseCase } from 'src/application/use-cases/order/update-order.usecase';
 import { DeleteOrderUseCase } from 'src/application/use-cases/order/delete-order.usecase';
 import { GetAllOrdersUseCase } from 'src/application/use-cases/order/get-all-orders.usecase';
+import { GetClientByIdUseCase } from 'src/application/use-cases/client/get-client-by-id.usecase';
+import { FindProductByIdUseCase } from 'src/application/use-cases/product/findById.usecase';
+import { Order, OrderId } from 'src/domain/entities/order/order.entity';
+import { OrderItem } from 'src/domain/entities/order_item/order-item.entity';
 
 @ApiTags('Orders')
 @Controller('order')
@@ -46,61 +52,103 @@ export class OrderController {
   @Inject(GetAllOrdersUseCase)
   private readonly getAllOrdersUseCase: GetAllOrdersUseCase;
 
+  @Inject(GetClientByIdUseCase)
+  private readonly getClientByIdUseCase: GetClientByIdUseCase;
+
+  @Inject(FindProductByIdUseCase)
+  private readonly findProductByIdUseCase: FindProductByIdUseCase;
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createOrderDto: CreateOrderDto) {
-    return await this.createOrderUseCase.execute(createOrderDto);
+    const { clientId, items, notes } = createOrderDto;
+
+    const client = clientId
+      ? await this.getClientByIdUseCase.execute(clientId)
+      : null;
+    if (clientId && !client) {
+      throw new NotFoundException(`Client with ID ${clientId} not found`);
+    }
+
+    const orderItems: OrderItem[] = [];
+    const tempOrderId = new OrderId();
+
+    for (const itemDto of items) {
+      const productData = await this.findProductByIdUseCase.execute(
+        itemDto.productId,
+      );
+      if (!productData) {
+        throw new NotFoundException(
+          `Product with ID ${itemDto.productId} not found`,
+        );
+      }
+
+      const orderItem = OrderItem.create({
+        orderId: tempOrderId,
+        product: productData,
+        quantity: itemDto.quantity,
+      });
+
+      orderItems.push(orderItem);
+    }
+
+    try {
+      const order = Order.create({ client, items: orderItems, notes });
+      return await this.createOrderUseCase.execute(order);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get()
   @ApiOperation({
-    summary: 'Listar todos os pedidos',
-    description: 'Retorna uma lista paginada de todos os pedidos',
+    summary: 'List all orders',
+    description: 'Returns a paginated list of all orders',
   })
   @ApiQuery({
     name: 'page',
     required: false,
-    description: 'Número da página (padrão: 1)',
+    description: 'Page number (default: 1)',
     example: 1,
   })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Itens por página (padrão: 10)',
+    description: 'Items per page (default: 10)',
     example: 10,
   })
   @ApiResponse({
     status: 200,
-    description: 'Lista de pedidos retornada com sucesso',
+    description: 'Orders list returned successfully',
   })
   async findAll(
     @Query('limit', new ParseIntPipe({ optional: true })) limit: number = 10,
     @Query('page', new ParseIntPipe({ optional: true })) page: number = 1,
   ) {
-    const validLimit = Math.max(1, Math.min(limit || 10, 100)); // Entre 1 e 100
-    const validPage = Math.max(1, page || 1); // Mínimo 1
-    const skip = (validPage - 1) * validLimit; // Sempre >= 0
+    const validLimit = Math.max(1, Math.min(limit || 10, 100));
+    const validPage = Math.max(1, page || 1);
+    const skip = (validPage - 1) * validLimit;
 
     return await this.getAllOrdersUseCase.execute(validLimit, skip);
   }
 
   @Get('/:orderId')
   @ApiOperation({
-    summary: 'Buscar pedido por ID',
-    description: 'Retorna um pedido específico pelo seu ID',
+    summary: 'Find order by ID',
+    description: 'Returns a specific order by its ID',
   })
   @ApiParam({
     name: 'orderId',
-    description: 'ID do pedido',
+    description: 'Order ID',
     example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   })
   @ApiResponse({
     status: 200,
-    description: 'Pedido encontrado com sucesso',
+    description: 'Order found successfully',
   })
   @ApiResponse({
     status: 404,
-    description: 'Pedido não encontrado',
+    description: 'Order not found',
   })
   async findById(@Param('orderId', new ParseUUIDPipe()) orderId: string) {
     return await this.findByIdOrderUseCase.execute(orderId);
@@ -108,21 +156,21 @@ export class OrderController {
 
   @Patch('/:orderId')
   @ApiOperation({
-    summary: 'Atualizar pedido',
-    description: 'Atualiza um pedido existente',
+    summary: 'Update order',
+    description: 'Updates an existing order',
   })
   @ApiParam({
     name: 'orderId',
-    description: 'ID do pedido',
+    description: 'Order ID',
     example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   })
   @ApiResponse({
     status: 200,
-    description: 'Pedido atualizado com sucesso',
+    description: 'Order updated successfully',
   })
   @ApiResponse({
     status: 404,
-    description: 'Pedido não encontrado',
+    description: 'Order not found',
   })
   async update(
     @Param('orderId', new ParseUUIDPipe()) orderId: string,
@@ -137,21 +185,21 @@ export class OrderController {
   @Delete('/:orderId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
-    summary: 'Deletar pedido',
-    description: 'Remove um pedido do sistema',
+    summary: 'Delete order',
+    description: 'Removes an order from the system',
   })
   @ApiParam({
     name: 'orderId',
-    description: 'ID do pedido',
+    description: 'Order ID',
     example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
   })
   @ApiResponse({
     status: 204,
-    description: 'Pedido deletado com sucesso',
+    description: 'Order deleted successfully',
   })
   @ApiResponse({
     status: 404,
-    description: 'Pedido não encontrado',
+    description: 'Order not found',
   })
   async remove(@Param('orderId', new ParseUUIDPipe()) orderId: string) {
     await this.deleteOrderUseCase.execute(orderId);

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   OrderItem,
   OrderItemId,
@@ -8,6 +8,7 @@ import { OrderItemRepositoryPersistence } from 'src/infrastructure/persistence/p
 @Injectable()
 export class GetOrderItemByIdUseCase {
   constructor(
+    @Inject('OrderItemRepositoryInterface')
     private readonly orderItemRepositoryPersistence: OrderItemRepositoryPersistence,
   ) {}
 

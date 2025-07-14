@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Client, ClientId } from 'src/domain/entities/client/client.entity';
 import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client/client.repository.persistence';
 
 @Injectable()
 export class GetClientByIdUseCase {
   constructor(
+    @Inject('ClientRepositoryInterface')
     private readonly clientRepositoryPersistence: ClientRepositoryPersistence,
   ) {}
 

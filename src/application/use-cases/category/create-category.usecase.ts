@@ -1,23 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { Category } from 'src/domain/entities/category.entity';
-import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category/category.repository.persistence';
-
-export interface ICreateCategoryUseCase {
-  name: string;
-  description: string;
-}
+import { Inject, Injectable } from '@nestjs/common';
+import { Category } from 'src/domain/entities/category/category.entity';
+import { CategoryRepositoryInterface } from 'src/domain/repositories/category.repository.interface';
 
 @Injectable()
 export class CreateCategoryUseCase {
   constructor(
-    private readonly categoryRepositoryPersistence: CategoryRepositoryPersistence,
+    @Inject('CategoryRepositoryInterface')
+    private readonly categoryRepository: CategoryRepositoryInterface,
   ) {}
 
-  async execute(props: ICreateCategoryUseCase) {
-    const category = Category.create(props);
-
-    await this.categoryRepositoryPersistence.save(category);
-
-    return category;
+  async execute(category: Category): Promise<Category> {
+    return this.categoryRepository.save(category);
   }
 }

@@ -8,7 +8,7 @@ import { PaginatedResult } from 'src/adapters/shared/repositories/repository.int
 export class ClientRepositoryPersistence implements ClientRepositoryInterface {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async save(entity: Client): Promise<void> {
+  async save(entity: Client): Promise<Client> {
     await this.prismaService.client.create({
       data: {
         id: entity.id.toString(),
@@ -18,6 +18,7 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
         created_at: entity.createdAt,
       },
     });
+    return entity;
   }
 
   async remove(entityId: ClientId): Promise<void> {
@@ -28,7 +29,7 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
     });
   }
 
-  async update(entity: Client): Promise<void> {
+  async update(entity: Client): Promise<Client> {
     await this.prismaService.client.update({
       where: {
         id: entity.id.toString(),
@@ -39,6 +40,7 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
         cpf: entity.cpf,
       },
     });
+    return entity;
   }
 
   async findById(entityId: ClientId): Promise<Client | null> {
@@ -52,7 +54,7 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
       return null;
     }
 
-    return Client.create({
+    return new Client({
       id: new ClientId(client.id),
       createdAt: client.created_at,
       name: client.name,
@@ -74,14 +76,15 @@ export class ClientRepositoryPersistence implements ClientRepositoryInterface {
     return {
       currentPage,
       totalPages,
-      data: clients.map((client) =>
-        Client.create({
-          id: new ClientId(client.id),
-          createdAt: client.created_at,
-          name: client.name,
-          email: client.email,
-          cpf: client.cpf,
-        }),
+      data: clients.map(
+        (client) =>
+          new Client({
+            id: new ClientId(client.id),
+            createdAt: client.created_at,
+            name: client.name,
+            email: client.email,
+            cpf: client.cpf,
+          }),
       ),
     };
   }

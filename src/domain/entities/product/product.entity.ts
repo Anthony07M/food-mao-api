@@ -1,5 +1,5 @@
 import { Uuid } from 'src/adapters/shared/value-objects/uui.vo';
-import { Category } from './category.entity';
+import { Category } from '../category/category.entity';
 
 export class ProductId extends Uuid {}
 

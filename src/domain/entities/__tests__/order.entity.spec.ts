@@ -1,7 +1,7 @@
-import { Category } from '../category.entity';
+import { Category } from '../category/category.entity';
 import { Order, OrderId } from '../order/order.entity';
 import { OrderItem } from '../order_item/order-item.entity';
-import { Product } from '../product.entity';
+import { Product } from '../product/product.entity';
 
 describe('Unit test s', () => {
   let products: Product[];
@@ -34,7 +34,7 @@ describe('Unit test s', () => {
   it('should be create Order success', () => {
     const product = Product.create({
       name: 'Product Test',
-      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      category: Category.create({ name: 'CPU1', description: 'CPU1 lorem' }),
       description: 'Lorem ipsum',
       imageUrl: 'http://test.com',
       price: 123.44,
@@ -61,7 +61,7 @@ describe('Unit test s', () => {
   it('should be set status Read', () => {
     const product = Product.create({
       name: 'Product Test',
-      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      category: Category.create({ name: 'CPU1', description: 'CPU1 lorem' }),
       description: 'Lorem ipsum',
       imageUrl: 'http://test.com',
       price: 123.44,

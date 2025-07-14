@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
 import { PaymentRepositoryPersistence } from 'src/infrastructure/persistence/mercadoPago/payment.repository.persistence';
@@ -7,7 +7,9 @@ import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prism
 @Injectable()
 export class TasksServiceCheckoutPayment {
   constructor(
+    @Inject('OrderRepositoryInterface')
     private readonly orderRepositoryPersistence: OrderRepositoryPersistence,
+    @Inject('PaymentRepositoryInterface')
     private readonly paymentRepositoryPersistence: PaymentRepositoryPersistence,
   ) {}
 

@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Client } from 'src/domain/entities/client/client.entity';
-import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client/client.repository.persistence';
+import { ClientRepositoryInterface } from 'src/domain/repositories/client/client.repository.interface';
 
 interface ICreateClientUseCase {
   name: string;
@@ -11,17 +11,11 @@ interface ICreateClientUseCase {
 @Injectable()
 export class CreateClientUseCase {
   constructor(
-    private readonly clientRepositoryPersistence: ClientRepositoryPersistence,
+    @Inject('ClientRepositoryInterface')
+    private readonly clientRepository: ClientRepositoryInterface,
   ) {}
 
-  async execute(params: ICreateClientUseCase): Promise<Client> {
-    const client = Client.create({
-      name: params.name,
-      email: params.email,
-      cpf: params.cpf,
-    });
-
-    await this.clientRepositoryPersistence.save(client);
-    return client;
+  async execute(client: Client): Promise<Client> {
+    return this.clientRepository.save(client);
   }
 }

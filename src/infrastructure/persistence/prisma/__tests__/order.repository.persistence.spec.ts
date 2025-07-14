@@ -11,8 +11,8 @@ import {
   OrderItem,
   OrderItemId,
 } from '../../../../domain/entities/order_item/order-item.entity';
-import { Product, ProductId } from '../../../../domain/entities/product.entity';
-import { Category, CategoryId } from '../../../../domain/entities/category.entity';
+import { Product, ProductId } from '../../../../domain/entities/product/product.entity';
+import { Category, CategoryId } from '../../../../domain/entities/category/category.entity';
 import { Client, ClientId } from '../../../../domain/entities/client/client.entity';
 
 describe('OrderRepositoryPersistence', () => {
@@ -242,11 +242,27 @@ describe('OrderRepositoryPersistence', () => {
   describe('update', () => {
     it('should update an order successfully', async () => {
       // Arrange
+      const category = Category.create({
+        name: 'Electronics',
+        description: 'Electronic products',
+      });
+
+      const product = Product.create({
+        name: 'Smartphone',
+        description: 'Latest smartphone',
+        price: 999.99,
+        imageUrl: 'http://example.com/phone.jpg',
+        category,
+      });
+
+      const orderItem = OrderItem.create({
+        orderId: new OrderId(),
+        quantity: 2,
+        product,
+      });
+
       const order = Order.create({
-        items: [],
-        notes: null,
-        status: 'In_Progress',
-        paymentStatus: 'Concluded',
+        items: [orderItem],
       });
 
       mockPrismaService.order.update.mockResolvedValue(undefined);

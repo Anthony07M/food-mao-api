@@ -16,12 +16,15 @@ describe('ClientController', () => {
       controllers: [ClientController],
       providers: [
         PrismaService,
+        {
+          provide: 'ClientRepositoryInterface',
+          useClass: ClientRepositoryPersistence,
+        },
         CreateClientUseCase,
         GetAllClientsUseCase,
         GetClientByIdUseCase,
         UpdateClientUseCase,
         DeleteClientUseCase,
-        ClientRepositoryPersistence,
       ],
     }).compile();
 

@@ -1,8 +1,11 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   Param,
   ParseIntPipe,
@@ -20,6 +23,7 @@ import {
 import { GetClientByIdUseCase } from 'src/application/use-cases/client/get-client-by-id.usecase';
 import { UpdateClientUseCase } from 'src/application/use-cases/client/update-client.usecase';
 import { DeleteClientUseCase } from 'src/application/use-cases/client/delete-client.usecase';
+import { Client } from 'src/domain/entities/client/client.entity';
 
 @Controller('clients')
 export class ClientController {
@@ -39,8 +43,14 @@ export class ClientController {
   private readonly deleteClientUseCase: DeleteClientUseCase;
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   create(@Body() createClientDto: CreateClientDto) {
-    return this.createClientUseCase.execute(createClientDto);
+    try {
+      const client = Client.create(createClientDto);
+      return this.createClientUseCase.execute(client);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Get()

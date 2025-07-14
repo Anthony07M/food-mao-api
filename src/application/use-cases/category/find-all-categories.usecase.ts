@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category/category.repository.persistence';
+import { Inject, Injectable } from '@nestjs/common';
+import { CategoryRepositoryInterface } from 'src/domain/repositories/category.repository.interface';
 
 export interface IFindAllCategoriesUseCase {
   limit: number;
@@ -9,11 +9,12 @@ export interface IFindAllCategoriesUseCase {
 @Injectable()
 export class FindAllCategoriesUseCase {
   constructor(
-    private readonly categoryRepositoryPersistence: CategoryRepositoryPersistence,
+    @Inject('CategoryRepositoryInterface')
+    private readonly categoryRepository: CategoryRepositoryInterface,
   ) {}
 
   async execute({ limit, skip }: IFindAllCategoriesUseCase) {
-    const { data, ...rest } = await this.categoryRepositoryPersistence.findAll(
+    const { data, ...rest } = await this.categoryRepository.findAll(
       limit,
       skip,
     );
