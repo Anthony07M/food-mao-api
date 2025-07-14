@@ -24,14 +24,23 @@ describe('OrderController', () => {
       controllers: [OrderController],
       providers: [
         PrismaService,
+        {
+          provide: 'OrderRepositoryInterface',
+          useClass: OrderRepositoryPersistence,
+        },
+        {
+          provide: 'ProductRepositoryInterface',
+          useClass: ProductRepositoryPersistence,
+        },
+        {
+          provide: 'ClientRepositoryInterface',
+          useClass: ClientRepositoryPersistence,
+        },
         CreateOrderUseCase,
         FindByIdOrderUseCase,
         UpdateOrderUseCase,
         DeleteOrderUseCase,
         GetAllOrdersUseCase,
-        OrderRepositoryPersistence,
-        ProductRepositoryPersistence,
-        ClientRepositoryPersistence,
       ],
       imports: [],
     }).compile();
@@ -55,7 +64,6 @@ describe('OrderController', () => {
     //     ],
     //     clientId: 'client-uuid',
     //   };
-
     //   const expectedResult = {
     //     id: 'order-uuid',
     //     orderCode: 'ORD-1234567890',
@@ -91,13 +99,10 @@ describe('OrderController', () => {
     //       },
     //     ],
     //   };
-
     //   // jest
     //   //   .spyOn(createOrderUseCase, 'execute')
     //   //   .mockResolvedValue(expectedResult);
-
     //   const result = await controller.create(createOrderDto);
-
     //   expect(createOrderUseCase.execute).toHaveBeenCalledWith({
     //     clientId: 'client-uuid',
     //     items: [
@@ -107,10 +112,8 @@ describe('OrderController', () => {
     //       },
     //     ],
     //   });
-
     //   expect(result).toEqual(expectedResult);
     // });
-
     // it('should create an order without client', async () => {
     //   const createOrderDto = {
     //     items: [
@@ -120,7 +123,6 @@ describe('OrderController', () => {
     //       },
     //     ],
     //   };
-
     //   const expectedResult = {
     //     id: 'order-uuid',
     //     orderCode: 'ORD-1234567890',
@@ -151,13 +153,10 @@ describe('OrderController', () => {
     //       },
     //     ],
     //   };
-
     //   // jest
     //   //   .spyOn(createOrderUseCase, 'execute')
     //   //   .mockResolvedValue(expectedResult);
-
     //   const result = await controller.create(createOrderDto);
-
     //   expect(createOrderUseCase.execute).toHaveBeenCalledWith({
     //     clientId: undefined,
     //     items: [
@@ -167,10 +166,8 @@ describe('OrderController', () => {
     //       },
     //     ],
     //   });
-
     //   expect(result).toEqual(expectedResult);
     // });
-
     // it('should create an order with multiple items having different notes', async () => {
     //   const createOrderDto = {
     //     items: [
@@ -189,7 +186,6 @@ describe('OrderController', () => {
     //     ],
     //     clientId: 'client-uuid',
     //   };
-
     //   const expectedResult = {
     //     id: 'order-uuid',
     //     orderCode: 'ORD-1234567890',
@@ -257,13 +253,10 @@ describe('OrderController', () => {
     //       },
     //     ],
     //   };
-
     //   jest
     //     .spyOn(createOrderUseCase, 'execute')
     //     .mockResolvedValue(expectedResult);
-
     //   const result = await controller.create(createOrderDto);
-
     //   expect(createOrderUseCase.execute).toHaveBeenCalledWith({
     //     clientId: 'client-uuid',
     //     items: [
@@ -281,7 +274,6 @@ describe('OrderController', () => {
     //       },
     //     ],
     //   });
-
     //   expect(result).toEqual(expectedResult);
     // });
   });

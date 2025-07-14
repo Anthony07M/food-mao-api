@@ -17,13 +17,16 @@ describe('OrderItemController', () => {
       controllers: [OrderItemController],
       providers: [
         PrismaService,
+        {
+          provide: 'OrderItemRepositoryInterface',
+          useClass: OrderItemRepositoryPersistence,
+        },
         CreateOrderItemUseCase,
         GetAllOrderItemsUseCase,
         GetOrderItemByIdUseCase,
         GetOrderItemsByOrderUseCase,
         UpdateOrderItemUseCase,
         DeleteOrderItemUseCase,
-        OrderItemRepositoryPersistence,
       ],
     }).compile();
 
