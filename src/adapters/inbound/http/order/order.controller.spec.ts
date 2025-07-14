@@ -127,9 +127,9 @@ describe('OrderController', () => {
     //     id: 'order-uuid',
     //     orderCode: 'ORD-1234567890',
     //     client: null,
-    //     status: 'Pending' as StatusOrder, // ✅ Tipo correto
+    //     status: 'Pending' as StatusOrder,
     //     total: 2599.66,
-    //     paymentStatus: 'Pending' as StatusPayment, // ✅ Tipo correto
+    //     paymentStatus: 'Pending' as StatusPayment,
     //     createdAt: new Date(),
     //     preparationStarted: null,
     //     readyAt: null,
@@ -195,9 +195,9 @@ describe('OrderController', () => {
     //       email: 'joao@email.com',
     //       cpf: '12345678901',
     //     },
-    //     status: 'Pending' as StatusOrder, // ✅ Tipo correto
+    //     status: 'Pending' as StatusOrder,
     //     total: 15000.0,
-    //     paymentStatus: 'Pending' as StatusPayment, // ✅ Tipo correto
+    //     paymentStatus: 'Pending' as StatusPayment,
     //     createdAt: new Date(),
     //     preparationStarted: null,
     //     readyAt: null,

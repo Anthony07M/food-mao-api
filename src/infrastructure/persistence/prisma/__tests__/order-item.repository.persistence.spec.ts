@@ -249,7 +249,6 @@ describe('OrderRepositoryPersistence', () => {
       const order = Order.create({
         items: [],
         notes: null,
-        paymentStatus: 'Concluded',
       });
 
       mockPrismaService.order.update.mockResolvedValue(undefined);
