@@ -11,7 +11,7 @@ describe('OrderItem Entity', () => {
   it('should create OrderItem successfully', () => {
     const product = Product.create({
       name: 'Product Test',
-      category: Category.create({ name: 'C1', description: 'C1 lorem' }),
+      category: Category.create({ name: 'CPU1', description: 'CPU1 lorem' }),
       description: 'Lorem ipsum',
       imageUrl: 'http://test.com',
       price: 123.44,

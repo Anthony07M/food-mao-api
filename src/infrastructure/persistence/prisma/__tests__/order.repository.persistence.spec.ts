@@ -245,7 +245,6 @@ describe('OrderRepositoryPersistence', () => {
       const order = Order.create({
         items: [],
         notes: null,
-        status: 'In_Progress',
         paymentStatus: 'Concluded',
       });
 
