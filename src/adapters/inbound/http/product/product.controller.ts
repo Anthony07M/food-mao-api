@@ -1,9 +1,13 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
+  NotFoundException,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
@@ -18,6 +22,9 @@ import { RemoveProductUseCase } from 'src/application/use-cases/product/remove-p
 import { UpdateProductUseCase } from 'src/application/use-cases/product/update-product.usecase';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from 'src/domain/entities/product/product.entity';
+import { Category } from 'src/domain/entities/category/category.entity';
+import { FindCategoryByIdUseCase } from 'src/application/use-cases/category/findById.usecase';
 
 @Controller('product')
 export class ProductController {
@@ -36,9 +43,26 @@ export class ProductController {
   @Inject(FindAllProductsUseCase)
   private readonly findAllProductsUseCase: FindAllProductsUseCase;
 
+  @Inject(FindCategoryByIdUseCase)
+  private readonly findCategoryByIdUseCase: FindCategoryByIdUseCase;
+
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() createProductDto: CreateProductDto) {
-    return await this.createProductUseCase.execute(createProductDto);
+    const categoryData = await this.findCategoryByIdUseCase.execute(
+      createProductDto.categoryId,
+    );
+    if (!categoryData) {
+      throw new NotFoundException('Category not found.');
+    }
+    const category = Category.create(categoryData);
+
+    try {
+      const product = Product.create({ ...createProductDto, category });
+      return await this.createProductUseCase.execute(product);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Patch('/:productId')

@@ -6,11 +6,11 @@ import {
   OrderItem,
   OrderItemId,
 } from '../../../../domain/entities/order_item/order-item.entity';
-import { Product, ProductId } from '../../../../domain/entities/product.entity';
+import { Product, ProductId } from '../../../../domain/entities/product/product.entity';
 import {
   Category,
   CategoryId,
-} from '../../../../domain/entities/category.entity';
+} from '../../../../domain/entities/category/category.entity';
 import {
   Client,
   ClientId,

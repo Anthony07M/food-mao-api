@@ -1,4 +1,4 @@
-import { Category, CategoryId } from '../category.entity';
+import { Category, CategoryId } from '../category/category.entity';
 
 describe('Unit Test Category Entity', () => {
   const input = {

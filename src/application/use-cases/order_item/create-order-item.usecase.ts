@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { OrderItem } from 'src/domain/entities/order_item/order-item.entity';
-import { OrderItemRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order_item/order-item.repository.persistence';
+import { OrderItemRepositoryInterface } from 'src/domain/repositories/order_item/order-item.repository.interface';
 
 interface ICreateOrderItemUseCase {
   orderId: string;
@@ -12,7 +12,8 @@ interface ICreateOrderItemUseCase {
 @Injectable()
 export class CreateOrderItemUseCase {
   constructor(
-    private readonly orderItemRepositoryPersistence: OrderItemRepositoryPersistence,
+    @Inject('OrderItemRepositoryInterface')
+    private readonly orderItemRepository: OrderItemRepositoryInterface,
   ) {}
 
   async execute(params: ICreateOrderItemUseCase) {

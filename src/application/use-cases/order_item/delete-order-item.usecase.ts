@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderItemId } from 'src/domain/entities/order_item/order-item.entity';
 import { OrderItemRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order_item/order-item.repository.persistence';
 
 @Injectable()
 export class DeleteOrderItemUseCase {
   constructor(
+    @Inject('OrderItemRepositoryInterface')
     private readonly orderItemRepositoryPersistence: OrderItemRepositoryPersistence,
   ) {}
 

@@ -69,8 +69,14 @@ export class Order {
     this.items = params.items;
   }
 
-  static create(params: OrderConstructrorParams): Order {
-    return new Order(params);
+  static create(params: Omit<OrderConstructrorParams, 'id' | 'orderCode' | 'status' | 'total' | 'paymentStatus' | 'createdAt'>): Order {
+    if (!params.items || params.items.length === 0) {
+      throw new Error('Order must have at least one item.');
+    }
+
+    const order = new Order(params);
+    order.calculateTotal();
+    return order;
   }
 
   calculateTotal(): number {

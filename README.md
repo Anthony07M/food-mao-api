@@ -72,7 +72,31 @@ O **Food Mao API** é um sistema backend robusto para gerenciamento de restauran
 
 ## 🏗️ Arquitetura
 
-Este projeto segue os princípios da **Arquitetura Hexagonal (Clean Architecture)**, organizando o código em camadas bem definidas:
+Este projeto segue os princípios da **Arquitetura Hexagonal (Clean Architecture)**, organizando o código em camadas bem definidas para garantir baixo acoplamento e alta coesão.
+
+### Princípios da Arquitetura Limpa em Ação
+
+Para reforçar a separação de responsabilidades, o fluxo de criação de dados segue um padrão rigoroso:
+
+1.  **Entidade de Domínio (Guardiã das Regras de Negócio):**
+    *   Toda a lógica de validação e as regras de negócio essenciais residem dentro da própria entidade de domínio (ex: `Client`, `Product`).
+    *   A entidade possui um método estático `create()` que garante que nenhum objeto pode ser instanciado em um estado inválido. Se uma regra for violada (ex: um preço de produto negativo), a entidade lança um erro.
+
+2.  **Controller (Orquestrador da Camada de Adaptação):**
+    *   Recebe os DTOs (Data Transfer Objects) da requisição HTTP.
+    *   Busca as entidades relacionadas necessárias (ex: busca a `Category` ao criar um `Product`).
+    *   Chama o método `create()` da entidade para criar uma instância de domínio válida, passando os dados recebidos.
+    *   Captura erros de validação lançados pela entidade e os converte em respostas HTTP apropriadas (ex: `400 Bad Request`).
+    *   Se a criação da entidade for bem-sucedida, ele passa o objeto de domínio para o Caso de Uso.
+
+3.  **Caso de Uso (Executor da Lógica de Aplicação):**
+    *   Recebe a entidade de domínio já criada e validada.
+    *   **Não conhece DTOs** ou detalhes do protocolo HTTP.
+    *   Sua única responsabilidade é executar a lógica de aplicação, como orquestrar a persistência dos dados chamando o repositório.
+
+Este fluxo garante que o núcleo da aplicação (`domain` e `application`) permaneça puro e independente de detalhes de infraestrutura, como a API web.
+
+### Estrutura de Diretórios
 
 ```
 📁 src/

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ProductRepositoryPersistence } from 'src/infrastructure/persistence/prisma/product/product.repository.persistence';
 
 export interface IFindAllProductsUseCase {
@@ -9,6 +9,7 @@ export interface IFindAllProductsUseCase {
 @Injectable()
 export class FindAllProductsUseCase {
   constructor(
+    @Inject('ProductRepositoryInterface')
     private readonly productRepository: ProductRepositoryPersistence,
   ) {}
 

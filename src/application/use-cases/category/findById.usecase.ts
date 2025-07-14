@@ -1,15 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CategoryId } from 'src/domain/entities/category.entity';
-import { CategoryRepositoryPersistence } from 'src/infrastructure/persistence/prisma/category/category.repository.persistence';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { CategoryId } from 'src/domain/entities/category/category.entity';
+import { CategoryRepositoryInterface } from 'src/domain/repositories/category.repository.interface';
 
 @Injectable()
 export class FindCategoryByIdUseCase {
   constructor(
-    private readonly categoryRepositoryPersistence: CategoryRepositoryPersistence,
+    @Inject('CategoryRepositoryInterface')
+    private readonly categoryRepository: CategoryRepositoryInterface,
   ) {}
 
   async execute(categoryId: string) {
-    const category = await this.categoryRepositoryPersistence.findById(
+    const category = await this.categoryRepository.findById(
       new CategoryId(categoryId),
     );
 

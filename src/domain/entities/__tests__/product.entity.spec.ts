@@ -1,5 +1,5 @@
-import { Category } from '../category.entity';
-import { Product, ProductId } from '../product.entity';
+import { Category } from '../category/category.entity';
+import { Product, ProductId } from '../product/product.entity';
 
 describe('Unit test Product Entity', () => {
   it('should be create product success', () => {

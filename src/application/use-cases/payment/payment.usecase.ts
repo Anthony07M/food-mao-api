@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 
 import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order/order.repository.persistence';
@@ -12,7 +13,9 @@ import { CreatePayment } from 'src/adapters/shared/repositories/payment.interfac
 @Injectable()
 export class PaymentUseCase {
   constructor(
+    @Inject('OrderRepositoryInterface')
     private readonly orderRepositoryPersistence: OrderRepositoryPersistence,
+    @Inject('PaymentRepositoryInterface')
     private readonly paymentRepositoryPersistence: PaymentRepositoryPersistence,
   ) {}
 

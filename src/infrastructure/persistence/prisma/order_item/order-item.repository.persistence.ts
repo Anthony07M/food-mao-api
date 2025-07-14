@@ -7,8 +7,8 @@ import {
 import { OrderItemRepositoryInterface } from 'src/domain/repositories/order_item/order-item.repository.interface';
 import { PaginatedResult } from 'src/adapters/shared/repositories/repository.interface';
 import { OrderId } from 'src/domain/entities/order/order.entity';
-import { Product, ProductId } from 'src/domain/entities/product.entity';
-import { Category, CategoryId } from 'src/domain/entities/category.entity';
+import { Product, ProductId } from 'src/domain/entities/product/product.entity';
+import { Category, CategoryId } from 'src/domain/entities/category/category.entity';
 
 @Injectable()
 export class OrderItemRepositoryPersistence
@@ -16,15 +16,17 @@ export class OrderItemRepositoryPersistence
 {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async save(entity: OrderItem): Promise<void> {
+  async save(entity: OrderItem): Promise<OrderItem> {
     await this.prismaService.orderItem.create({
       data: {
         id: entity.id.toString(),
         order_id: entity.orderId.toString(),
-        product_id: entity.productId,
+        product_id: entity.product.id.toString(),
         quantity: entity.quantity,
       },
     });
+    
+    return entity;
   }
 
   async remove(entityId: OrderItemId): Promise<void> {
@@ -35,17 +37,19 @@ export class OrderItemRepositoryPersistence
     });
   }
 
-  async update(entity: OrderItem): Promise<void> {
+  async update(entity: OrderItem): Promise<OrderItem> {
     await this.prismaService.orderItem.update({
       where: {
         id: entity.id.toString(),
       },
       data: {
         order_id: entity.orderId.toString(),
-        product_id: entity.productId,
+        product_id: entity.product.id.toString(),
         quantity: entity.quantity,
       },
     });
+    
+    return entity;
   }
 
   async findById(entityId: OrderItemId): Promise<OrderItem | null> {
@@ -55,21 +59,22 @@ export class OrderItemRepositoryPersistence
       },
       include: { product: { include: { category: true } } },
     });
+    
     if (!orderItem) {
       return null;
     }
 
-    return OrderItem.create({
+    return new OrderItem({
       id: new OrderItemId(orderItem.id),
       orderId: new OrderId(orderItem.order_id),
       quantity: orderItem.quantity,
-      product: Product.create({
+      product: new Product({
         id: new ProductId(orderItem.product.id),
         name: orderItem.product.name,
         price: orderItem.product.price,
         description: orderItem.product.description,
         imageUrl: orderItem.product.imageUrl,
-        category: Category.create({
+        category: new Category({
           id: new CategoryId(orderItem.product.category.id),
           description: orderItem.product.category.description,
           name: orderItem.product.category.name,
@@ -96,17 +101,17 @@ export class OrderItemRepositoryPersistence
       currentPage,
       totalPages,
       data: orderItems?.map((orderItem) => {
-        return OrderItem.create({
+        return new OrderItem({
           id: new OrderItemId(orderItem.id),
           orderId: new OrderId(orderItem.order_id),
           quantity: orderItem.quantity,
-          product: Product.create({
+          product: new Product({
             id: new ProductId(orderItem.product.id),
             name: orderItem.product.name,
             price: orderItem.product.price,
             description: orderItem.product.description,
             imageUrl: orderItem.product.imageUrl,
-            category: Category.create({
+            category: new Category({
               id: new CategoryId(orderItem.product.category.id),
               description: orderItem.product.category.description,
               name: orderItem.product.category.name,
@@ -126,16 +131,16 @@ export class OrderItemRepositoryPersistence
     });
 
     return orderItems.map((orderItem) =>
-      OrderItem.create({
+      new OrderItem({
         id: new OrderItemId(orderItem.id),
         orderId: new OrderId(orderItem.order_id),
-        product: Product.create({
+        product: new Product({
           id: new ProductId(orderItem.product.id),
           name: orderItem.product.name,
           price: orderItem.product.price,
           description: orderItem.product.description,
           imageUrl: orderItem.product.imageUrl,
-          category: Category.create({
+          category: new Category({
             id: new CategoryId(orderItem.product.category.id),
             description: orderItem.product.category.description,
             name: orderItem.product.category.name,

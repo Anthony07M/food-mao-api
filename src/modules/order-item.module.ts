@@ -14,7 +14,10 @@ import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
   controllers: [OrderItemController],
   providers: [
     PrismaService,
-    OrderItemRepositoryPersistence,
+    {
+      provide: 'OrderItemRepositoryInterface',
+      useClass: OrderItemRepositoryPersistence,
+    },
     OrderRepositoryPersistence,
     CreateOrderItemUseCase,
     GetAllOrderItemsUseCase,
@@ -24,7 +27,10 @@ import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
     DeleteOrderItemUseCase,
   ],
   exports: [
-    OrderItemRepositoryPersistence,
+    {
+      provide: 'OrderItemRepositoryInterface',
+      useClass: OrderItemRepositoryPersistence,
+    },
     CreateOrderItemUseCase,
     GetAllOrderItemsUseCase,
     GetOrderItemByIdUseCase,

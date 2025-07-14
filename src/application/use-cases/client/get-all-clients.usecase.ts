@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PaginatedResult } from 'src/adapters/shared/repositories/repository.interface';
 import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client/client.repository.persistence';
 
@@ -12,6 +12,7 @@ export type GetAllClientsResponse = PaginatedResult<{
 @Injectable()
 export class GetAllClientsUseCase {
   constructor(
+    @Inject('ClientRepositoryInterface')
     private readonly clientRepositoryPersistence: ClientRepositoryPersistence,
   ) {}
 

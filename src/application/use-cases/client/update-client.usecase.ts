@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Client, ClientId } from 'src/domain/entities/client/client.entity';
 import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client/client.repository.persistence';
 
@@ -12,6 +12,7 @@ interface IUpdateClientUseCaseParams {
 @Injectable()
 export class UpdateClientUseCase {
   constructor(
+    @Inject('ClientRepositoryInterface')
     private readonly clientRepositoryPersistence: ClientRepositoryPersistence,
   ) {}
 

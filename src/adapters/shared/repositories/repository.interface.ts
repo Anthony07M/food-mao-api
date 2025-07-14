@@ -7,9 +7,9 @@ export interface PaginatedResult<T> {
 }
 
 export interface RepositoryInterface<Entity, ID extends ValueObject> {
-  save(entity: Entity): Promise<void>;
+  save(entity: Entity): Promise<Entity>;
   remove(entityId: ID): Promise<void>;
-  update(entity: Entity): Promise<void>;
+  update(entity: Entity): Promise<Entity>;
   findById(entityId: ID): Promise<Entity | null>;
   findAll(limit: number, skip: number): Promise<PaginatedResult<Entity>>;
 }

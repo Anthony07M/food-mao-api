@@ -1,7 +1,10 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   Param,
   ParseIntPipe,
@@ -16,6 +19,7 @@ import { UpdateCategoryUseCase } from 'src/application/use-cases/category/update
 import { UpdateCategoryDto } from './dtos/update-category.dto';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { FindCategoryByIdUseCase } from 'src/application/use-cases/category/findById.usecase';
+import { Category } from 'src/domain/entities/category/category.entity';
 
 @Controller('category')
 export class CategoryController {
@@ -32,8 +36,14 @@ export class CategoryController {
   private readonly findCategoryByIdUseCase: FindCategoryByIdUseCase;
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   async create(@Body() createCategoryDto: CreateCategoryDto) {
-    return await this.createCategoryUseCase.execute(createCategoryDto);
+    try {
+      const category = Category.create(createCategoryDto);
+      return await this.createCategoryUseCase.execute(category);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   @Patch('/:categoryId')

@@ -1,6 +1,6 @@
-import { Category } from '../category.entity';
+import { Category } from '../category/category.entity';
 import { OrderId } from '../order/order.entity';
-import { Product } from '../product.entity';
+import { Product } from '../product/product.entity';
 import {
   OrderItem,
   OrderItemConstructorParams,

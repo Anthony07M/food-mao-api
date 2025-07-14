@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { OrderItemRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order_item/order-item.repository.persistence';
 
 @Injectable()
 export class GetAllOrderItemsUseCase {
   constructor(
+    @Inject('OrderItemRepositoryInterface')
     private readonly orderItemRepositoryPersistence: OrderItemRepositoryPersistence,
   ) {}
 

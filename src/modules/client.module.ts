@@ -12,7 +12,10 @@ import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
   controllers: [ClientController],
   providers: [
     PrismaService,
-    ClientRepositoryPersistence,
+    {
+      provide: 'ClientRepositoryInterface',
+      useClass: ClientRepositoryPersistence,
+    },
     CreateClientUseCase,
     GetAllClientsUseCase,
     GetClientByIdUseCase,
@@ -20,7 +23,10 @@ import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
     DeleteClientUseCase,
   ],
   exports: [
-    ClientRepositoryPersistence,
+    {
+      provide: 'ClientRepositoryInterface',
+      useClass: ClientRepositoryPersistence,
+    },
     CreateClientUseCase,
     GetAllClientsUseCase,
     GetClientByIdUseCase,

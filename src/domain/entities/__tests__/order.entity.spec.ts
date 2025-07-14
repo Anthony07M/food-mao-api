@@ -1,7 +1,7 @@
-import { Category } from '../category.entity';
+import { Category } from '../category/category.entity';
 import { Order, OrderId } from '../order/order.entity';
 import { OrderItem } from '../order_item/order-item.entity';
-import { Product } from '../product.entity';
+import { Product } from '../product/product.entity';
 
 describe('Unit test s', () => {
   let products: Product[];

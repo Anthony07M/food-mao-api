@@ -10,23 +10,23 @@ import {
   OrderItem,
   OrderItemId,
 } from 'src/domain/entities/order_item/order-item.entity';
-import { Product, ProductId } from 'src/domain/entities/product.entity';
-import { Category, CategoryId } from 'src/domain/entities/category.entity';
+import { Product, ProductId } from 'src/domain/entities/product/product.entity';
+import { Category, CategoryId } from 'src/domain/entities/category/category.entity';
 import { OrderRepositoryInterface } from 'src/domain/repositories/order/order.repository.interface';
 import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
+import { PaginatedResult } from 'src/adapters/shared/repositories/repository.interface';
 
 @Injectable()
 export class OrderRepositoryPersistence implements OrderRepositoryInterface {
   constructor(private prismaService: PrismaService) {}
 
-  async save(order: Order): Promise<void> {
+  async save(order: Order): Promise<Order> {
     await this.prismaService.order.create({
       data: {
         id: order.id.toString(),
         order_code: order.orderCode,
         status: order.status,
         total: order.calculateTotal(),
-        payment_id: order.paymentId,
         payment_status: order.paymentStatus,
         created_at: order.createdAt,
         client_id: order.client ? order.client.id.toString() : null,
@@ -45,6 +45,8 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         },
       },
     });
+    
+    return order;
   }
 
   async remove(orderId: OrderId): Promise<void> {
@@ -57,14 +59,13 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
     });
   }
 
-  async update(order: Order): Promise<void> {
+  async update(order: Order): Promise<Order> {
     await this.prismaService.order.update({
       where: { id: order.id.toString() },
       data: {
         client_id: order.client ? order.client.id.toString() : null,
         completed_at: order.completedAt,
         order_code: order.orderCode,
-        payment_id: order.paymentId,
         payment_status: order.paymentStatus,
         ready_at: order.readyAt,
         preparation_started: order.preparationStarted,
@@ -73,6 +74,8 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         total: order.calculateTotal(),
       },
     });
+    
+    return order;
   }
 
   async findById(orderId: OrderId): Promise<Order | null> {
@@ -114,12 +117,11 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
       });
     });
 
-    return Order.create({
+    return new Order({
       id: new OrderId(order.id),
       completedAt: order.completed_at,
       createdAt: order.created_at,
       orderCode: order.order_code,
-      paymentId: order.payment_id,
       paymentStatus: order.payment_status as StatusPayment,
       preparationStarted: order.preparation_started,
       readyAt: order.ready_at,
@@ -128,7 +130,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
       notes: order.notes,
       items,
       client: order.client
-        ? Client.create({
+        ? new Client({
             id: new ClientId(order.client.id),
             name: order.client.name,
             email: order.client.email,
@@ -142,7 +144,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
   async findAll(
     limit: number,
     skip: number,
-  ): Promise<{ currentPage: number; totalPages: number; data: Order[] }> {
+  ): Promise<PaginatedResult<Order>> {
     const safeLimit = Math.max(1, Math.min(limit, 100));
     const safeSkip = Math.max(0, skip);
 
@@ -195,7 +197,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
             });
           });
 
-          return Order.create({
+          return new Order({
             id: new OrderId(order.id),
             items,
             completedAt: order.completed_at,
@@ -208,7 +210,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
             total: order.total,
             notes: order.notes,
             client: order.client
-              ? Client.create({
+              ? new Client({
                   id: new ClientId(order.client.id),
                   name: order.client.name,
                   email: order.client.email,
@@ -220,7 +222,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         }),
       };
     } catch (error) {
-      throw new Error(`Erro ao buscar pedidos: ${error.message}`);
+      throw new Error(`Error fetching orders: ${error.message}`);
     }
   }
 
@@ -267,13 +269,12 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
             });
           });
 
-          return Order.create({
+          return new Order({
             id: new OrderId(order.id),
             items,
             completedAt: order.completed_at,
             createdAt: order.created_at,
             orderCode: order.order_code,
-            paymentId: order.payment_id,
             paymentStatus: order.payment_status as StatusPayment,
             preparationStarted: order.preparation_started,
             readyAt: order.ready_at,
@@ -281,7 +282,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
             total: order.total,
             notes: order.notes,
             client: order.client
-              ? Client.create({
+              ? new Client({
                   id: new ClientId(order.client.id),
                   name: order.client.name,
                   email: order.client.email,
@@ -293,7 +294,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
         }),
       };
     } catch (error) {
-      throw new Error(`Erro ao buscar pedidos: ${error.message}`);
+      throw new Error(`Error fetching orders: ${error.message}`);
     }
   }
 }
