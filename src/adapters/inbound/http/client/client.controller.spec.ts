@@ -25,7 +25,6 @@ describe('ClientController', () => {
         GetClientByIdUseCase,
         UpdateClientUseCase,
         DeleteClientUseCase,
-        GetClientByIdUseCase,
       ],
     }).compile();
 

@@ -242,9 +242,27 @@ describe('OrderRepositoryPersistence', () => {
   describe('update', () => {
     it('should update an order successfully', async () => {
       // Arrange
+      const category = Category.create({
+        name: 'Electronics',
+        description: 'Electronic products',
+      });
+
+      const product = Product.create({
+        name: 'Smartphone',
+        description: 'Latest smartphone',
+        price: 999.99,
+        imageUrl: 'http://example.com/phone.jpg',
+        category,
+      });
+
+      const orderItem = OrderItem.create({
+        orderId: new OrderId(),
+        quantity: 2,
+        product,
+      });
+
       const order = Order.create({
-        items: [],
-        notes: null,
+        items: [orderItem],
       });
 
       mockPrismaService.order.update.mockResolvedValue(undefined);
