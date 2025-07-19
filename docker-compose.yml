@@ -22,27 +22,27 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: food-mao-api
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://root:1234@db:5432/food_db
-      - PORT=3000
-    env_file:
-      - .env
-    networks:
-      - food-mao-net
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - ./logs:/app/logs
+  # api:
+  #   build: 
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: food-mao-api
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - DATABASE_URL=postgresql://root:1234@db:5432/food_db
+  #     - PORT=3000
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - food-mao-net
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   volumes:
+  #     - ./logs:/app/logs
 
 networks:
   food-mao-net:
