@@ -13,7 +13,20 @@ spec:
     metadata:
       labels:
         app: api-food
+    
     spec:
+      initContainers:
+      - name: prisma-migration
+        image: anthony07m/api-food-mao:latest #
+        imagePullPolicy: Always
+        command: ["sh", "-c", "npx prisma migrate deploy"]
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: api-food-secret #
+                key: DATABASE_URL #
+
       containers:
       - name: api-food-container
         image: anthony07m/api-food-mao:latest
