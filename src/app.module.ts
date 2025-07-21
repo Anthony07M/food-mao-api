@@ -14,6 +14,7 @@ import { TasksServiceCheckoutPayment } from './adapters/outbound/auto/payment/pa
 import { CategoryModule } from './modules/category.module';
 import { ProductModule } from './modules/product.module';
 import { OrderModule } from './modules/order.module';
+import { HealthController } from './adapters/inbound/http/health/health/health.controller';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { OrderModule } from './modules/order.module';
     OrderModule,
     OrderItemModule,
   ],
-  controllers: [PaymentController],
+  controllers: [PaymentController, HealthController],
   providers: [
     PrismaService,
     MercadoPagoService,
