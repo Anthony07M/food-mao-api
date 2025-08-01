@@ -10,7 +10,7 @@ import { PaymentRepositoryPersistence } from './infrastructure/persistence/merca
 import { ClientModule } from './modules/client.module';
 import { OrderItemModule } from './modules/order-item.module';
 import { LoggerMiddleware } from './adapters/inbound/http/morgan/morgan.middleware';
-import { TasksServiceCheckoutPayment } from './adapters/outbound/auto/payment/payment.cron';
+import { TaskServiceCheckoutPayment } from './adapters/outbound/auto/payment/payment.cron';
 import { CategoryModule } from './modules/category.module';
 import { ProductModule } from './modules/product.module';
 import { OrderModule } from './modules/order.module';
@@ -36,7 +36,7 @@ import { HealthController } from './adapters/inbound/http/health/health/health.c
     },
     PaymentRepositoryPersistence,
     PaymentUseCase,
-    TasksServiceCheckoutPayment,
+    TaskServiceCheckoutPayment,
   ],
 })
 export class AppModule implements NestModule {
