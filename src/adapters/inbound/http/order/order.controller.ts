@@ -13,7 +13,6 @@ import {
   HttpStatus,
   HttpCode,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -33,6 +32,7 @@ import { GetClientByIdUseCase } from 'src/application/use-cases/client/get-clien
 import { FindProductByIdUseCase } from 'src/application/use-cases/product/findById.usecase';
 import { Order, OrderId } from 'src/domain/entities/order/order.entity';
 import { OrderItem } from 'src/domain/entities/order_item/order-item.entity';
+import { FindOrdersActiveUseCase } from 'src/application/use-cases/order/find-orders-active.usecase';
 
 @ApiTags('Orders')
 @Controller('order')
@@ -57,6 +57,9 @@ export class OrderController {
 
   @Inject(FindProductByIdUseCase)
   private readonly findProductByIdUseCase: FindProductByIdUseCase;
+
+  @Inject(FindOrdersActiveUseCase)
+  private readonly findOrdersActiveUseCase: FindOrdersActiveUseCase;
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -92,12 +95,8 @@ export class OrderController {
       orderItems.push(orderItem);
     }
 
-    try {
-      const order = Order.create({ client, items: orderItems, notes });
-      return await this.createOrderUseCase.execute(order);
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
+    const order = Order.create({ client, items: orderItems, notes });
+    return await this.createOrderUseCase.execute(order);
   }
 
   @Get()
@@ -203,5 +202,13 @@ export class OrderController {
   })
   async remove(@Param('orderId', new ParseUUIDPipe()) orderId: string) {
     await this.deleteOrderUseCase.execute(orderId);
+  }
+
+  @Get('/list/actives')
+  async getOrdersActive(
+    @Query('limit', new ParseIntPipe()) limit: number,
+    @Query('skip', new ParseIntPipe()) skip: number,
+  ) {
+    return await this.findOrdersActiveUseCase.execute(limit, skip);
   }
 }

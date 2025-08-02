@@ -9,6 +9,7 @@ import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prism
 import { PrismaService } from 'src/infrastructure/config/prisma/prisma.service';
 import { ClientModule } from './client.module';
 import { ProductModule } from './product.module';
+import { FindOrdersActiveUseCase } from 'src/application/use-cases/order/find-orders-active.usecase';
 
 @Module({
   imports: [ClientModule, ProductModule],
@@ -24,6 +25,7 @@ import { ProductModule } from './product.module';
     FindByIdOrderUseCase,
     GetAllOrdersUseCase,
     UpdateOrderUseCase,
+    FindOrdersActiveUseCase,
   ],
   exports: [
     {
@@ -35,6 +37,7 @@ import { ProductModule } from './product.module';
     FindByIdOrderUseCase,
     GetAllOrdersUseCase,
     UpdateOrderUseCase,
+    FindOrdersActiveUseCase,
   ],
 })
 export class OrderModule {}
