@@ -49,7 +49,7 @@ export class PaymentUseCase {
       await this.paymentRepositoryPersistence.createPayment(body);
 
     order.paymentStatus = 'GeneratedQRCode';
-    order.paymentId = response.orderId!.toString();
+    order.paymentId = response.orderId!;
     response.orderId = order.id.toString();
     await this.orderRepositoryPersistence.update(order);
 
