@@ -12,6 +12,7 @@ import { ProductRepositoryPersistence } from 'src/infrastructure/persistence/pri
 import { ClientRepositoryPersistence } from 'src/infrastructure/persistence/prisma/client/client.repository.persistence';
 import { GetClientByIdUseCase } from 'src/application/use-cases/client/get-client-by-id.usecase';
 import { FindProductByIdUseCase } from 'src/application/use-cases/product/findById.usecase';
+import { FindOrdersActiveUseCase } from 'src/application/use-cases/order/find-orders-active.usecase';
 
 describe('OrderController', () => {
   let controller: OrderController;
@@ -41,6 +42,7 @@ describe('OrderController', () => {
         GetAllOrdersUseCase,
         GetClientByIdUseCase,
         FindProductByIdUseCase,
+        FindOrdersActiveUseCase,
       ],
       imports: [],
     }).compile();
