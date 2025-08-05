@@ -23,9 +23,6 @@ API RESTful para sistema de gestão de pedidos de comida, desenvolvida com NestJ
 - [Endpoints](#endpoints)
 - [Testes](#testes)
 - [Documentação da API](#documentação-da-api)
-- [Arquitetura de Infraestrutura (Kubernetes)](#️-arquitetura-de-infraestrutura-kubernetes)
-- [Desenho da Arquitetura](#-desenho-da-arquitetura)
-- [Guia de Execução em Kubernetes](#-guia-de-execução-em-kubernetes)
 
 ## 🎯 Sobre o Projeto
 
@@ -680,42 +677,6 @@ test: add unit tests for user service
 
 Este projeto está sob a licença UNLICENSED.
 
-## ☁️ Arquitetura de Infraestrutura (Kubernetes)
-
-Para atender aos requisitos da Fase 2, a aplicação foi conteinerizada e orquestrada com Kubernetes, criando um ambiente de produção resiliente, seguro e, principalmente, escalável. Os seguintes componentes foram criados para esta arquitetura:
-
-- **`Service` (`service.yml`):** Atua como o ponto de entrada de rede para a nossa aplicação. Ele é do tipo `LoadBalancer`, o que significa que o provedor de nuvem provisiona um balanceador de carga externo para expor a API à internet de forma estável, distribuindo o tráfego entre os Pods disponíveis.
-
-- **`Deployment` (`deployment.yml`):** É o responsável por gerenciar os Pods da nossa aplicação. Ele garante que o número desejado de réplicas (no caso, 2) esteja sempre em execução e controla as atualizações de imagem sem tempo de inatividade.
-    - **Init Container:** Um contêiner de inicialização (`prisma-migration`) executa as migrações do banco de dados antes que a aplicação principal inicie. Isso garante que a aplicação sempre se conecte a um banco de dados com o schema correto.
-
-- **`Secret` e `ConfigMap` (`secret.yml`, `configmap.yml`):** Para seguir as boas práticas de segurança, `Secrets` são usados para injetar dados sensíveis como a `DATABASE_URL` e tokens. `ConfigMaps` são usados para configurações de ambiente, como o `NODE_ENV`, desacoplando a configuração da imagem do contêiner.
-
-### Ponto de Atenção: Escalabilidade com HPA
-
-[cite_start]Para solucionar o requisito de escalabilidade e responder diretamente ao "ponto de atenção" do desafio[cite: 81], foi implementado o **Horizontal Pod Autoscaler (HPA)**.
-
-- [cite_start]**`HPA (HorizontalPodAutoscaler)` (`hpa.yml`):** Este é o componente que resolve o problema de performance em momentos de alta demanda, como em horários de pico no restaurante[cite: 81]. Ele monitora continuamente o uso de CPU dos Pods. Se a utilização média ultrapassar **80%**, o HPA automaticamente instrui o `Deployment` a criar novos Pods, escalando horizontalmente até um máximo de **5 réplicas**. Quando a demanda diminui, ele faz o processo inverso, otimizando o uso de recursos e garantindo que a aplicação se mantenha performática e disponível para os clientes sem intervenção manual.
-
-## 🗺️ Desenho da Arquitetura
-
-[cite_start]O diagrama abaixo ilustra a interação entre todos os componentes da infraestrutura, o fluxo de requisições e como o HPA atua para garantir a escalabilidade da aplicação, conforme solicitado nos requisitos[cite: 70].
-
-![Arquitetura HPA](./docs/images/hpa.png)
-
-
-## ⚙️ Guia de Execução em Kubernetes
-
-Este guia detalha como implantar a aplicação em um cluster Kubernetes.
-
-#### Pré-requisito: Codificar os Segredos
-
-Os valores no arquivo `secret.yml` precisam ser codificados em **Base64**. Use os comandos:
-
-```bash
-echo -n 'SUA_DATABASE_URL' | base64
-echo -n 'SEU_MERCADO_PAGO_ACCESS_TOKEN' | base64
-```
 ## 👨‍💻 Equipe
 
 **Projeto desenvolvido para a Fase 01 do Tech Challenge em Software Architecture da FIAP**
@@ -726,3 +687,108 @@ echo -n 'SEU_MERCADO_PAGO_ACCESS_TOKEN' | base64
 
 ---
 
+# Food Mao API 🍔 (Fase 2)
+
+API RESTful para sistema de gestão de pedidos de comida, desenvolvida com NestJS, Clean Architecture e implantada em um ambiente Kubernetes escalável.
+
+> [cite_start]**Projeto desenvolvido para a Fase 02 do Tech Challenge em Software Architecture da FIAP** 
+
+## 👥 Equipe de Desenvolvimento
+
+- **[Aldair Azevedo](https://github.com/AldairAzevedo)** - RM361097
+- **[Andre Costa](https://github.com/andreneox)** - RM361095  
+- **[Anthony Freitas](https://github.com/Anthony07M)** - RM361093
+
+## 📋 Índice
+
+- [Sobre o Projeto](#sobre-o-projeto)
+- [Entregáveis da Fase 2](#-entregáveis-da-fase-2)
+- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
+- [Arquitetura de Software](#️-arquitetura-de-software)
+- [Arquitetura de Infraestrutura (Kubernetes)](#-arquitetura-de-infraestrutura-kubernetes)
+- [Desenho da Arquitetura](#-desenho-da-arquitetura)
+- [Guia de Execução](#-guia-de-execução)
+- [Endpoints da API](#-endpoints-da-api)
+- [Testes](#-testes)
+- [Documentação da API (Swagger & Postman)](#-documentação-da-api-swagger--postman)
+- [Vídeo de Demonstração](#-vídeo-de-demonstração)
+
+## 🎯 Sobre o Projeto
+
+[cite_start]O **Food Mao API** é um sistema de autoatendimento para uma lanchonete, projetado para otimizar o fluxo de pedidos, desde a seleção dos produtos pelo cliente até a preparação na cozinha e a entrega final[cite: 19]. [cite_start]A Fase 2 do projeto focou em evoluir a aplicação para uma arquitetura de microsserviços robusta, escalável e segura, pronta para um ambiente de produção na nuvem[cite: 48, 63].
+
+## 🏆 Entregáveis da Fase 2
+
+[cite_start]Este projeto atende a todos os requisitos da Fase 2 do Tech Challenge[cite: 47]:
+
+- [cite_start]✅ **APIs Refatoradas:** Código atualizado seguindo os padrões de Clean Code e Clean Architecture, com endpoints para checkout, consulta de status de pagamento, webhook do Mercado Pago e listagem de pedidos priorizada[cite: 48, 49, 50, 51, 52, 53].
+- [cite_start]✅ **Arquitetura em Kubernetes:** Infraestrutura como código utilizando manifestos YAML para garantir escalabilidade, segurança e boas práticas[cite: 63, 66].
+- [cite_start]✅ **Escalabilidade com HPA:** Implementação do Horizontal Pod Autoscaler para escalar a aplicação horizontalmente conforme a demanda[cite: 65].
+- [cite_start]✅ **Segurança:** Uso de `Secrets` para dados sensíveis e `ConfigMaps` para configurações, evitando exposição de informações críticas[cite: 67].
+- [cite_start]✅ **Boas Práticas:** Utilização de `Deployments` para gerenciar os Pods e `Services` para expor a aplicação de forma estável[cite: 68].
+- [cite_start]✅ **Documentação Completa:** Este README contém o desenho da arquitetura, guia de execução, e links para a collection da API e vídeo de demonstração[cite: 69].
+
+## 🚀 Tecnologias Utilizadas
+
+### Core Framework
+- **[NestJS](https://nestjs.com/)**, **[TypeScript](https://www.typescriptlang.org/)**, **[Node.js](https://nodejs.org/)**
+
+### Banco de Dados
+- **[Prisma ORM](https://www.prisma.io/)**, **[PostgreSQL](https://www.postgresql.org/)**
+
+### DevOps & Cloud
+- **[Docker](https://www.docker.com/)**: Containerização da aplicação.
+- [cite_start]**[Kubernetes (K8s)](https://kubernetes.io/)**: Orquestração de contêineres para automação, escalabilidade e resiliência[cite: 63].
+- **[kubectl](https://kubernetes.io/docs/reference/kubectl/)**: Ferramenta de linha de comando para interagir com o cluster K8s.
+
+[cite_start]*(O ambiente pode ser executado em qualquer provedor de nuvem como EKS (Amazon), GKE (Google), AKS (Azure) ou localmente com Minikube/Kind [cite: 73, 74])*
+
+## 🏗️ Arquitetura de Software
+
+[cite_start]O projeto segue os princípios da **Arquitetura Hexagonal (Clean Architecture)**, organizando o código em camadas bem definidas (`domain`, `application`, `adapters`, `infrastructure`) para garantir baixo acoplamento, alta coesão e testabilidade[cite: 48].
+
+*(A explicação detalhada da arquitetura de software, entidades e fluxos de dados permanece a mesma da Fase 1 e pode ser mantida aqui).*
+
+## ☁️ Arquitetura de Infraestrutura (Kubernetes)
+
+[cite_start]Para a Fase 2, a aplicação foi conteinerizada e orquestrada com Kubernetes para criar um ambiente de produção resiliente e escalável[cite: 63]. Os seguintes componentes foram criados:
+
+- **`Service` (`service.yml`):** Atua como o ponto de entrada de rede para a nossa aplicação. [cite_start]Ele é do tipo `LoadBalancer`, o que significa que o provedor de nuvem irá provisionar um balanceador de carga externo para expor a API à internet de forma estável, distribuindo o tráfego entre os Pods disponíveis[cite: 68].
+
+- **`Deployment` (`deployment.yml`):** É o cérebro que gerencia os Pods da nossa aplicação. [cite_start]Ele garante que o número desejado de réplicas esteja sempre em execução[cite: 68]. Além disso, ele gerencia as atualizações de imagem sem tempo de inatividade (rolling updates).
+    - **Init Container:** Um contêiner de inicialização (`prisma-migration`) é usado para executar as migrações do banco de dados (`npx prisma migrate deploy`) antes que o contêiner principal da aplicação inicie. Isso garante que a aplicação sempre se conecte a um banco de dados com o schema correto.
+
+- **`HPA (HorizontalPodAutoscaler)` (`hpa.yml`):** Este é o componente chave para a escalabilidade. [cite_start]Ele monitora o uso de CPU dos Pods[cite: 65]. Se a média de utilização ultrapassar 80%, o HPA automaticamente aumenta o número de réplicas (até um máximo de 5). [cite_start]Quando a demanda diminui, ele reduz o número de réplicas (para um mínimo de 2), otimizando custos e garantindo performance durante picos de acesso[cite: 81].
+
+- **`Secret` (`secret.yml`):** Utilizado para armazenar e injetar dados sensíveis, como a `DATABASE_URL` e o `MERCADO_PAGO_ACCESS_TOKEN`. [cite_start]Os dados são armazenados no cluster em formato Base64 e montados nos Pods como variáveis de ambiente, evitando que segredos fiquem expostos no código-fonte ou nos manifestos[cite: 67].
+
+- [cite_start]**`ConfigMap` (`configmap.yml`):** Usado para desacoplar as configurações do ambiente da imagem do contêiner[cite: 67]. No nosso caso, ele define a variável `NODE_ENV` como `production`, permitindo que a mesma imagem Docker seja usada em diferentes ambientes (desenvolvimento, produção) apenas alterando o ConfigMap.
+
+## 🗺️ Desenho da Arquitetura (HPA)
+
+[cite_start]O diagrama abaixo ilustra a interação entre todos os componentes da infraestrutura, o fluxo de requisições e como o HPA atua para garantir a escalabilidade da aplicação, conforme solicitado nos requisitos[cite: 70, 81].
+
+![Arquitetura Kubernetes hpa](./docs/images/hpa.png)
+
+## 🚀 Guia de Execução
+
+Existem duas formas de executar o projeto: localmente com Docker Compose (ideal para desenvolvimento) e em um cluster Kubernetes (ambiente de produção).
+
+### 1. Execução Local (Desenvolvimento)
+
+*(Mantenha a seção de "Instalação e Configuração" e "Executando a API" do seu README original aqui, pois ela é perfeita para o ambiente de desenvolvimento).*
+
+### 2. Execução em Ambiente Kubernetes
+
+[cite_start]Este guia assume que você já tem `kubectl` instalado e configurado para acessar seu cluster (Minikube, EKS, GKE, AKS, etc.)[cite: 73, 74].
+
+#### Pré-requisito: Codificar os Segredos
+
+Os valores no arquivo `secret.yml` precisam ser codificados em **Base64**. Você pode usar os seguintes comandos:
+
+```bash
+# Para a URL do banco de dados
+echo -n 'SUA_DATABASE_URL' | base64
+
+# Para o token do Mercado Pago
+echo -n 'SEU_MERCADO_PAGO_ACCESS_TOKEN' | base64
