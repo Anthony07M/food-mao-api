@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+// import { Cron } from '@nestjs/schedule';
 
 import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prisma/order/order.repository.persistence';
 import { PaymentRepositoryPersistence } from 'src/infrastructure/persistence/mercadoPago/payment.repository.persistence';
@@ -13,7 +13,7 @@ export class TaskServiceCheckoutPayment {
     private readonly paymentRepositoryPersistence: PaymentRepositoryPersistence,
   ) {}
 
-  @Cron('*/5 * * * * *')
+  // @Cron('*/5 * * * * *')
   async checkoutPayment() {
     const { data } =
       await this.orderRepositoryPersistence.findByStatusPayment(
