@@ -23,6 +23,9 @@ API RESTful para sistema de gestão de pedidos de comida, desenvolvida com NestJ
 - [Endpoints](#endpoints)
 - [Testes](#testes)
 - [Documentação da API](#documentação-da-api)
+- [Arquitetura de Infraestrutura (Kubernetes)](#️-arquitetura-de-infraestrutura-kubernetes)
+- [Desenho da Arquitetura](#-desenho-da-arquitetura)
+- [Guia de Execução em Kubernetes](#-guia-de-execução-em-kubernetes)
 
 ## 🎯 Sobre o Projeto
 
@@ -677,6 +680,42 @@ test: add unit tests for user service
 
 Este projeto está sob a licença UNLICENSED.
 
+## ☁️ Arquitetura de Infraestrutura (Kubernetes)
+
+Para atender aos requisitos da Fase 2, a aplicação foi conteinerizada e orquestrada com Kubernetes, criando um ambiente de produção resiliente, seguro e, principalmente, escalável. Os seguintes componentes foram criados para esta arquitetura:
+
+- **`Service` (`service.yml`):** Atua como o ponto de entrada de rede para a nossa aplicação. Ele é do tipo `LoadBalancer`, o que significa que o provedor de nuvem provisiona um balanceador de carga externo para expor a API à internet de forma estável, distribuindo o tráfego entre os Pods disponíveis.
+
+- **`Deployment` (`deployment.yml`):** É o responsável por gerenciar os Pods da nossa aplicação. Ele garante que o número desejado de réplicas (no caso, 2) esteja sempre em execução e controla as atualizações de imagem sem tempo de inatividade.
+    - **Init Container:** Um contêiner de inicialização (`prisma-migration`) executa as migrações do banco de dados antes que a aplicação principal inicie. Isso garante que a aplicação sempre se conecte a um banco de dados com o schema correto.
+
+- **`Secret` e `ConfigMap` (`secret.yml`, `configmap.yml`):** Para seguir as boas práticas de segurança, `Secrets` são usados para injetar dados sensíveis como a `DATABASE_URL` e tokens. `ConfigMaps` são usados para configurações de ambiente, como o `NODE_ENV`, desacoplando a configuração da imagem do contêiner.
+
+### Ponto de Atenção: Escalabilidade com HPA
+
+[cite_start]Para solucionar o requisito de escalabilidade e responder diretamente ao "ponto de atenção" do desafio[cite: 81], foi implementado o **Horizontal Pod Autoscaler (HPA)**.
+
+- [cite_start]**`HPA (HorizontalPodAutoscaler)` (`hpa.yml`):** Este é o componente que resolve o problema de performance em momentos de alta demanda, como em horários de pico no restaurante[cite: 81]. Ele monitora continuamente o uso de CPU dos Pods. Se a utilização média ultrapassar **80%**, o HPA automaticamente instrui o `Deployment` a criar novos Pods, escalando horizontalmente até um máximo de **5 réplicas**. Quando a demanda diminui, ele faz o processo inverso, otimizando o uso de recursos e garantindo que a aplicação se mantenha performática e disponível para os clientes sem intervenção manual.
+
+## 🗺️ Desenho da Arquitetura
+
+[cite_start]O diagrama abaixo ilustra a interação entre todos os componentes da infraestrutura, o fluxo de requisições e como o HPA atua para garantir a escalabilidade da aplicação, conforme solicitado nos requisitos[cite: 70].
+
+![Arquitetura HPA](./docs/images/hpa.png)
+
+
+## ⚙️ Guia de Execução em Kubernetes
+
+Este guia detalha como implantar a aplicação em um cluster Kubernetes.
+
+#### Pré-requisito: Codificar os Segredos
+
+Os valores no arquivo `secret.yml` precisam ser codificados em **Base64**. Use os comandos:
+
+```bash
+echo -n 'SUA_DATABASE_URL' | base64
+echo -n 'SEU_MERCADO_PAGO_ACCESS_TOKEN' | base64
+```
 ## 👨‍💻 Equipe
 
 **Projeto desenvolvido para a Fase 01 do Tech Challenge em Software Architecture da FIAP**
