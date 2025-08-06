@@ -13,7 +13,7 @@ export class TaskServiceCheckoutPayment {
     private readonly paymentRepositoryPersistence: PaymentRepositoryPersistence,
   ) {}
 
-  // @Cron('*/5 * * * * *')
+  //@Cron('*/5 * * * * *')
   async checkoutPayment() {
     const { data } =
       await this.orderRepositoryPersistence.findByStatusPayment(
