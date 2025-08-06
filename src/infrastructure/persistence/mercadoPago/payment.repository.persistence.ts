@@ -18,7 +18,7 @@ export class PaymentRepositoryPersistence {
     );
 
     try {
-      const response = await client.create({
+      const { id, point_of_interaction } = await client.create({
         body: {
           transaction_amount: body.transactionAmount,
           date_of_expiration: body.dateOfExpiration,
@@ -34,11 +34,10 @@ export class PaymentRepositoryPersistence {
       });
 
       return {
-        orderId: response.id!.toString(),
-        ticketUrl: response.point_of_interaction!.transaction_data!.ticket_url,
-        qrCode: response.point_of_interaction!.transaction_data!.qr_code,
-        qrCodeBase64:
-          response.point_of_interaction!.transaction_data!.qr_code_base64,
+        orderId: id!.toString(),
+        ticketUrl: point_of_interaction!.transaction_data!.ticket_url,
+        qrCode: point_of_interaction!.transaction_data!.qr_code,
+        qrCodeBase64: point_of_interaction!.transaction_data!.qr_code_base64,
       };
     } catch (error) {
       throw new BadRequestException(

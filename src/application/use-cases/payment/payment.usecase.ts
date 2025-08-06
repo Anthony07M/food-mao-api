@@ -9,6 +9,7 @@ import { OrderRepositoryPersistence } from 'src/infrastructure/persistence/prism
 import { OrderId } from 'src/domain/entities/order/order.entity';
 import { PaymentRepositoryPersistence } from 'src/infrastructure/persistence/mercadoPago/payment.repository.persistence';
 import { CreatePayment } from 'src/adapters/shared/repositories/payment.interface';
+import { WebHookDto } from 'src/adapters/outbound/http/payment/dto/payment.dto';
 
 @Injectable()
 export class PaymentUseCase {
@@ -49,10 +50,36 @@ export class PaymentUseCase {
       await this.paymentRepositoryPersistence.createPayment(body);
 
     order.paymentStatus = 'GeneratedQRCode';
-    order.paymentId = response.orderId!.toString();
+    order.paymentId = response.orderId!;
     response.orderId = order.id.toString();
     await this.orderRepositoryPersistence.update(order);
 
     return response;
+  }
+
+  async webhook(webHookDto: WebHookDto) {
+    const { data } = await this.orderRepositoryPersistence.findByPaymentId(
+      webHookDto.data.id,
+    );
+
+    if (data && data.paymentStatus === 'GeneratedQRCode') {
+      const response = await this.paymentRepositoryPersistence.checkoutPayment(
+        data.paymentId!.toString(),
+      );
+      if (response.status === 'approved') {
+        data.status = 'Confirmed';
+        data.paymentStatus = 'Concluded';
+        await this.orderRepositoryPersistence.update(data);
+      } else if (
+        response.status === 'cancelled' ||
+        response.status === 'rejected'
+      ) {
+        data.status = 'Canceled';
+        data.paymentStatus = 'Canceled';
+        await this.orderRepositoryPersistence.update(data);
+      }
+    }
+
+    return { message: 'Webhook received' };
   }
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { PaymentUseCase } from 'src/application/use-cases/payment/payment.usecase';
-import { PaymentDto } from './dto/payment.dto';
+import { PaymentDto, WebHookDto } from './dto/payment.dto';
 
 @Controller('payment')
 export class PaymentController {
@@ -10,5 +10,10 @@ export class PaymentController {
   @Post()
   async payment(@Body() paymentDto: PaymentDto) {
     return await this.paymentUseCase.payment(paymentDto.orderId);
+  }
+
+  @Post('webhook')
+  async webhook(@Body() webHookDto: WebHookDto) {
+    return await this.paymentUseCase.webhook(webHookDto);
   }
 }
