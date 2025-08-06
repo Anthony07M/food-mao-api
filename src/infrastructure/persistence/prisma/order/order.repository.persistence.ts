@@ -432,6 +432,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
           createdAt: order.created_at,
           orderCode: order.order_code,
           paymentStatus: order.payment_status as StatusPayment,
+          paymentId: order.payment_id,
           preparationStarted: order.preparation_started,
           readyAt: order.ready_at,
           status: order.status as StatusOrder,

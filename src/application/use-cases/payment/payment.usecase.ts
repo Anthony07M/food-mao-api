@@ -62,26 +62,22 @@ export class PaymentUseCase {
       webHookDto.data.id,
     );
 
-    if (!data) throw new NotFoundException('Order not found');
-
-    if (data.paymentStatus !== 'GeneratedQRCode')
-      throw new BadRequestException('Payment has already payed');
-
-    const response = await this.paymentRepositoryPersistence.checkoutPayment(
-      data.paymentId!.toString(),
-    );
-
-    if (response.status === 'approved') {
-      data.status = 'Confirmed';
-      data.paymentStatus = 'Concluded';
-      await this.orderRepositoryPersistence.update(data);
-    } else if (
-      response.status === 'cancelled' ||
-      response.status === 'rejected'
-    ) {
-      data.status = 'Canceled';
-      data.paymentStatus = 'Canceled';
-      await this.orderRepositoryPersistence.update(data);
+    if (data && data.paymentStatus === 'GeneratedQRCode') {
+      const response = await this.paymentRepositoryPersistence.checkoutPayment(
+        data.paymentId!.toString(),
+      );
+      if (response.status === 'approved') {
+        data.status = 'Confirmed';
+        data.paymentStatus = 'Concluded';
+        await this.orderRepositoryPersistence.update(data);
+      } else if (
+        response.status === 'cancelled' ||
+        response.status === 'rejected'
+      ) {
+        data.status = 'Canceled';
+        data.paymentStatus = 'Canceled';
+        await this.orderRepositoryPersistence.update(data);
+      }
     }
 
     return { message: 'Webhook received' };
