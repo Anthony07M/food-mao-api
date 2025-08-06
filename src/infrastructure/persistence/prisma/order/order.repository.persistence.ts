@@ -389,6 +389,7 @@ export class OrderRepositoryPersistence implements OrderRepositoryInterface {
           { status: 'In_Progress' },
           { status: 'Ready' },
           { status: 'Received' },
+          { status: 'Confirmed' },
         ],
       },
     });
